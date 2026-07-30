@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "siteName": "Students for Liberty Romania",
+    "home": "Home",
+    "events": "Events",
+    "about": "About us",
+    "getInvolved": "Get involved",
+    "menu": "Menu",
+    "logoAlt": "Students for Liberty Romania logo"
+  },
+  "footer": {
+    "tagline": "A freer future",
+    "menuTitle": "Menu",
+    "followTitle": "Follow us",
+    "contactTitle": "Contact",
+    "globalLink": "Students For Liberty Global",
+    "rights": "© {year} Students for Liberty Romania"
+  },
+  "home": {
+    "heroTitle": "Students for Liberty Romania",
+    "heroSubtitle": "A freer future starts with today's students. We educate and connect students who believe in liberty.",
+    "heroCta": "Get involved",
+    "heroSecondaryCta": "See our events",
+    "collageAlt": "Photos from Students for Liberty Romania events",
+    "nextEventLabel": "Next event",
+    "nextEventCta": "Details",
+    "latestTitle": "Latest events",
+    "latestCta": "All events",
+    "aboutTitle": "Who we are",
+    "aboutText": "We are the Romanian community of the world's largest pro-liberty student organization. We organize conferences, debates, and educational programs on liberty, free markets, and the memory of communism.",
+    "aboutCta": "Learn more",
+    "joinTitle": "Join the movement",
+    "joinText": "Become part of the Students for Liberty Romania community.",
+    "joinCta": "Sign up"
+  },
+  "events": {
+    "title": "Events",
+    "intro": "Conferences, debates, and educational programs organized by Students for Liberty Romania.",
+    "upcomingTab": "Upcoming",
+    "pastTab": "Past",
+    "allTags": "All",
+    "emptyUpcoming": "No events scheduled at the moment. Check back soon!",
+    "emptyPast": "No past events.",
+    "externalBadge": "External"
+  },
+  "eventDetail": {
+    "date": "Date",
+    "period": "Period",
+    "location": "Location",
+    "speakers": "Speakers",
+    "moderators": "Moderators",
+    "partners": "Partners",
+    "sponsors": "Sponsors",
+    "gallery": "Photo gallery",
+    "openImage": "Open image",
+    "backToEvents": "← Back to events"
+  },
+  "about": {
+    "title": "About us",
+    "missionTitle": "Our mission",
+    "missionText": "Students for Liberty Romania is the local community of Students For Liberty, the largest international student organization dedicated to liberty. We educate, develop, and connect students from Romania and Moldova who believe in individual liberty, free markets, and limited government.",
+    "globalTitle": "Part of Students For Liberty",
+    "globalText": "Students For Liberty is a global network active in over 100 countries, training tomorrow's leaders of liberty through educational programs, conferences, and mentorship. SFL Romania brings this mission to universities across Romania and Moldova.",
+    "globalCta": "Visit studentsforliberty.org",
+    "globalImageAlt": "Students For Liberty — the global community",
+    "valuesTitle": "Our values",
+    "value1Title": "Individual liberty",
+    "value1Text": "Every person has the right to live their life as they choose, as long as they respect the rights of others.",
+    "value2Title": "Free markets",
+    "value2Text": "Voluntary exchange and entrepreneurship are the engines of prosperity.",
+    "value3Title": "Historical memory",
+    "value3Text": "We keep the memory of communism alive so today's generations understand the price of freedom.",
+    "teamTitle": "Our team"
+  },
+  "getInvolved": {
+    "title": "Get involved",
+    "intro": "Become part of the Students for Liberty Romania community and build a freer future.",
+    "benefitsTitle": "What you get as a member",
+    "benefit1Title": "Community",
+    "benefit1Text": "Students from all over Romania and Moldova who share a passion for liberty.",
+    "benefit2Title": "Events and programs",
+    "benefit2Text": "Access to conferences, debates, John Galt School, LibertyCon, and international scholarships.",
+    "benefit3Title": "Personal development",
+    "benefit3Text": "Public speaking, event organizing, leadership, and an international network.",
+    "ctaTitle": "Ready to join?",
+    "ctaButton": "Fill in the signup form",
+    "contactTitle": "Contact us",
+    "contactText": "Questions? Write to us or follow us on social media."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you are looking for does not exist or has been moved.",
+    "cta": "Back home"
+  },
+  "tags": {
+    "conference": "Conference",
+    "debate": "Debate",
+    "liberty-road-2026": "Liberty Road Romania 2026",
+    "education-program": "Educational program",
+    "international": "International"
+  },
+  "meta": {
+    "defaultTitle": "Students for Liberty Romania — A freer future",
+    "defaultDescription": "The Romanian community of Students For Liberty: conferences, debates, and educational programs on liberty, free markets, and the memory of communism.",
+    "events": {
+      "title": "Events",
+      "description": "Students for Liberty Romania events: conferences, debates, and educational programs, upcoming and past."
+    },
+    "about": {
+      "title": "About us",
+      "description": "Who Students for Liberty Romania is: mission, values, and team."
+    },
+    "getInvolved": {
+      "title": "Get involved",
+      "description": "Join the Students for Liberty Romania community."
+    }
+  }
+}

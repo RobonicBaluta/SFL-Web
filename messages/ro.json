@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "siteName": "Students for Liberty România",
+    "home": "Acasă",
+    "events": "Evenimente",
+    "about": "Despre noi",
+    "getInvolved": "Implică-te",
+    "menu": "Meniu",
+    "logoAlt": "Logo Students for Liberty România"
+  },
+  "footer": {
+    "tagline": "Un viitor mai liber",
+    "menuTitle": "Meniu",
+    "followTitle": "Urmărește-ne",
+    "contactTitle": "Contact",
+    "globalLink": "Students For Liberty Global",
+    "rights": "© {year} Students for Liberty România"
+  },
+  "home": {
+    "heroTitle": "Students for Liberty România",
+    "heroSubtitle": "Un viitor mai liber începe cu studenții de azi. Educăm și conectăm studenții care cred în libertate.",
+    "heroCta": "Implică-te",
+    "heroSecondaryCta": "Vezi evenimentele",
+    "collageAlt": "Fotografii de la evenimentele Students for Liberty România",
+    "nextEventLabel": "Următorul eveniment",
+    "nextEventCta": "Detalii",
+    "latestTitle": "Ultimele evenimente",
+    "latestCta": "Toate evenimentele",
+    "aboutTitle": "Cine suntem",
+    "aboutText": "Suntem comunitatea din România a celei mai mari organizații studențești pro-libertate din lume. Organizăm conferințe, dezbateri și programe educaționale despre libertate, piețe libere și memoria comunismului.",
+    "aboutCta": "Află mai multe",
+    "joinTitle": "Alătură-te mișcării",
+    "joinText": "Devino parte din comunitatea Students for Liberty România.",
+    "joinCta": "Înscrie-te"
+  },
+  "events": {
+    "title": "evenimente",
+    "intro": "Conferințe, dezbateri și programe educaționale organizate de Students for Liberty România.",
+    "upcomingTab": "Viitoare",
+    "pastTab": "Trecute",
+    "allTags": "Toate",
+    "emptyUpcoming": "Niciun eveniment programat momentan. Revino curând!",
+    "emptyPast": "Niciun eveniment trecut.",
+    "externalBadge": "Extern"
+  },
+  "eventDetail": {
+    "date": "Data",
+    "period": "Perioada",
+    "location": "Locație",
+    "speakers": "Speakeri",
+    "moderators": "Moderatori",
+    "partners": "Parteneri",
+    "sponsors": "Sponsori",
+    "gallery": "Galerie foto",
+    "openImage": "Deschide imaginea",
+    "backToEvents": "← Înapoi la evenimente"
+  },
+  "about": {
+    "title": "Despre noi",
+    "missionTitle": "Misiunea noastră",
+    "missionText": "Students for Liberty România este comunitatea locală a Students For Liberty, cea mai mare organizație internațională de studenți dedicată libertății. Educăm, dezvoltăm și conectăm studenți din România și Republica Moldova care cred în libertate individuală, piețe libere și guvernare limitată.",
+    "globalTitle": "Parte din Students For Liberty",
+    "globalText": "Students For Liberty este o rețea globală prezentă în peste 100 de țări, care formează liderii libertății de mâine prin programe educaționale, conferințe și mentorat. SFL România aduce această misiune în universitățile din România și Republica Moldova.",
+    "globalCta": "Vizitează studentsforliberty.org",
+    "globalImageAlt": "Students For Liberty — comunitatea globală",
+    "valuesTitle": "Valorile noastre",
+    "value1Title": "Libertate individuală",
+    "value1Text": "Fiecare om are dreptul să își trăiască viața așa cum alege, atâta timp cât respectă drepturile celorlalți.",
+    "value2Title": "Piețe libere",
+    "value2Text": "Schimbul voluntar și antreprenoriatul sunt motoarele prosperității.",
+    "value3Title": "Memorie istorică",
+    "value3Text": "Păstrăm vie memoria comunismului pentru ca generațiile de azi să înțeleagă prețul libertății.",
+    "teamTitle": "Echipa noastră"
+  },
+  "getInvolved": {
+    "title": "Implică-te",
+    "intro": "Devino parte din comunitatea Students for Liberty România și construiește un viitor mai liber.",
+    "benefitsTitle": "Ce primești ca membru",
+    "benefit1Title": "Comunitate",
+    "benefit1Text": "Studenți din toată România și Republica Moldova care împărtășesc pasiunea pentru libertate.",
+    "benefit2Title": "Evenimente și programe",
+    "benefit2Text": "Acces la conferințe, dezbateri, John Galt School, LibertyCon și burse internaționale.",
+    "benefit3Title": "Dezvoltare personală",
+    "benefit3Text": "Public speaking, organizare de evenimente, leadership și o rețea internațională.",
+    "ctaTitle": "Gata să te alături?",
+    "ctaButton": "Completează formularul de înscriere",
+    "contactTitle": "Contactează-ne",
+    "contactText": "Ai întrebări? Scrie-ne sau urmărește-ne pe rețelele sociale."
+  },
+  "notFound": {
+    "title": "Pagina nu a fost găsită",
+    "text": "Pagina pe care o cauți nu există sau a fost mutată.",
+    "cta": "Înapoi acasă"
+  },
+  "tags": {
+    "conference": "Conferință",
+    "debate": "Dezbatere",
+    "liberty-road-2026": "Liberty Road Romania 2026",
+    "education-program": "Program educațional",
+    "international": "Internațional"
+  },
+  "meta": {
+    "defaultTitle": "Students for Liberty România — Un viitor mai liber",
+    "defaultDescription": "Comunitatea din România a Students For Liberty: conferințe, dezbateri și programe educaționale despre libertate, piețe libere și memoria comunismului.",
+    "events": {
+      "title": "Evenimente",
+      "description": "Evenimentele Students for Liberty România: conferințe, dezbateri și programe educaționale, viitoare și trecute."
+    },
+    "about": {
+      "title": "Despre noi",
+      "description": "Cine este Students for Liberty România: misiune, valori și echipă."
+    },
+    "getInvolved": {
+      "title": "Implică-te",
+      "description": "Alătură-te comunității Students for Liberty România."
+    }
+  }
+}
