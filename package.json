@@ -1,7 +1,9 @@
 {
   "name": "sfl-romania-web",
   "private": true,
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "predev": "node scripts/sync-event-images.mjs",
     "dev": "next dev",
@@ -16,7 +18,7 @@
     "gray-matter": "^4.0.3",
     "next": "^15.5.0",
     "next-intl": "^4.3.0",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "sharp": "^0.34.0",
