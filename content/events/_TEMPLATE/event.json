@@ -1,0 +1,13 @@
+{
+  "slug": "YYYY-MM-numele-evenimentului",
+  "date": "YYYY-MM-DD",
+  "city": { "ro": "Oraș", "en": "City" },
+  "venue": { "ro": "Locul desfășurării", "en": "Venue name" },
+  "speakers": ["Nume Speaker"],
+  "moderators": [],
+  "partners": [],
+  "sponsors": [],
+  "tags": ["conference"],
+  "cover": "cover.jpg",
+  "external": false
+}

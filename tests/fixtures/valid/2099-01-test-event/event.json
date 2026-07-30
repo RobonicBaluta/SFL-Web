@@ -1,0 +1,9 @@
+{
+  "slug": "2099-01-test-event",
+  "date": "2099-01-15",
+  "city": { "ro": "București", "en": "Bucharest" },
+  "venue": { "ro": "Sala de test", "en": "Test hall" },
+  "speakers": ["Test Speaker"],
+  "tags": ["conference"],
+  "cover": "photo.jpg"
+}
