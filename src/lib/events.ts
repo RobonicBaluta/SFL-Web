@@ -73,7 +73,13 @@ export function loadEvent(folder: string, locale: Locale, dir = DEFAULT_DIR): Sf
 
   const metaPath = path.join(eventDir, "event.json");
   if (!fs.existsSync(metaPath)) throw new Error(`${folder}: missing event.json`);
-  const parsed = eventMetaSchema.safeParse(JSON.parse(fs.readFileSync(metaPath, "utf8")));
+  let raw: unknown;
+  try {
+    raw = JSON.parse(fs.readFileSync(metaPath, "utf8"));
+  } catch (e) {
+    throw new Error(`${folder}/event.json: invalid JSON — ${(e as Error).message}`);
+  }
+  const parsed = eventMetaSchema.safeParse(raw);
   if (!parsed.success) fail(`${folder}/event.json`, parsed.error);
   const meta = parsed.data;
   if (meta.slug !== folder) {

@@ -15,7 +15,13 @@ const teamSchema = z.array(
 export type TeamMember = { name: string; role: string; photo?: string };
 
 export function getTeam(locale: "ro" | "en", file = DEFAULT_FILE): TeamMember[] {
-  const parsed = teamSchema.safeParse(JSON.parse(fs.readFileSync(file, "utf8")));
+  let raw: unknown;
+  try {
+    raw = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (e) {
+    throw new Error(`team.json: invalid JSON — ${(e as Error).message}`);
+  }
+  const parsed = teamSchema.safeParse(raw);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     throw new Error(`team.json: ${issue.path.join(".")} ${issue.message}`);

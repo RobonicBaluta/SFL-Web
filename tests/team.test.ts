@@ -35,6 +35,11 @@ describe("getTeam", () => {
     expect(() => getTeam("ro", file)).toThrow(/team\.json/);
   });
 
+  it("rejects malformed JSON, naming the file", () => {
+    const file = writeTemp('[{"name": "Ana Pop",}]');
+    expect(() => getTeam("ro", file)).toThrow(/team\.json: invalid JSON/);
+  });
+
   it("reads the real content/team.json without throwing", () => {
     expect(() => getTeam("ro")).not.toThrow();
   });

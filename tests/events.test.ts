@@ -63,6 +63,12 @@ describe("loader", () => {
   it("rejects a cover that is not in images/", () => {
     expect(() => loadEvent("bad-cover", "ro", INVALID)).toThrow(/bad-cover\/event\.json: cover/);
   });
+
+  it("rejects malformed JSON, naming the file", () => {
+    expect(() => loadEvent("bad-json", "ro", INVALID)).toThrow(
+      /bad-json\/event\.json: invalid JSON/
+    );
+  });
 });
 
 describe("splitEvents", () => {
