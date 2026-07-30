@@ -46,7 +46,10 @@ export default async function GetInvolvedPage({
         </h2>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {benefits.map((b) => (
-            <div key={b.title} className="border-2 border-sfl-black p-6">
+            <div
+              key={b.title}
+              className="border-2 border-sfl-black p-6 shadow-[6px_6px_0_0_var(--color-sfl-gold)]"
+            >
               <h3 className="font-display text-xl font-bold uppercase">{b.title}</h3>
               <p className="mt-2 text-sfl-gray">{b.text}</p>
             </div>

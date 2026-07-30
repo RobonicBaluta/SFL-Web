@@ -7,7 +7,7 @@ export const siteConfig = {
   signupFormUrl: "https://studentsforliberty.org/europe/application/",
   // TODO(SFL): add your real profiles; entries with an empty url are hidden
   social: [
-    { name: "Instagram", url: "" },
+    { name: "Instagram", url: "https://www.instagram.com/esflromania/" },
     { name: "Facebook", url: "" },
     { name: "TikTok", url: "" },
     { name: "LinkedIn", url: "" }
