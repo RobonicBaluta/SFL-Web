@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { assertLocale } from "@/i18n/locale";
 import { alternatesFor } from "@/lib/seo";
 import { siteConfig } from "@/site.config";
 
@@ -7,12 +8,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     title: t("getInvolved.title"),
     description: t("getInvolved.description"),
-    alternates: alternatesFor("/implica-te")
+    alternates: alternatesFor(locale, "/implica-te")
   };
 }
 
@@ -21,7 +22,7 @@ export default async function GetInvolvedPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("getInvolved");
   const social = siteConfig.social.filter((s) => s.url !== "");

@@ -1,7 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventsExplorer from "@/components/EventsExplorer";
+import { assertLocale } from "@/i18n/locale";
 import { toCardData } from "@/lib/cards";
-import { getAllEvents, splitEvents, type Locale, type SflEvent } from "@/lib/events";
+import { getAllEvents, splitEvents, type SflEvent } from "@/lib/events";
 import { alternatesFor } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -11,12 +12,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     title: t("events.title"),
     description: t("events.description"),
-    alternates: alternatesFor("/evenimente")
+    alternates: alternatesFor(locale, "/evenimente")
   };
 }
 
@@ -25,14 +26,13 @@ export default async function EventsPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("events");
   const tTags = await getTranslations("tags");
 
-  const { upcoming, past } = splitEvents(getAllEvents(locale as Locale), new Date());
-  const map = (list: SflEvent[]) =>
-    list.map((e) => toCardData(e, locale as Locale, (key) => tTags(key)));
+  const { upcoming, past } = splitEvents(getAllEvents(locale), new Date());
+  const map = (list: SflEvent[]) => list.map((e) => toCardData(e, locale, (key) => tTags(key)));
 
   return (
     <main className="flex-1">

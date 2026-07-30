@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventCard from "@/components/EventCard";
+import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { toCardData } from "@/lib/cards";
 import { formatEventDate } from "@/lib/dates";
-import { getAllEvents, splitEvents, type Locale } from "@/lib/events";
+import { getAllEvents, splitEvents } from "@/lib/events";
 import { alternatesFor } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -21,11 +22,11 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     description: t("defaultDescription"),
-    alternates: alternatesFor("/")
+    alternates: alternatesFor(locale, "/")
   };
 }
 
@@ -34,14 +35,14 @@ export default async function HomePage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const tTags = await getTranslations("tags");
 
-  const { upcoming, past } = splitEvents(getAllEvents(locale as Locale), new Date());
+  const { upcoming, past } = splitEvents(getAllEvents(locale), new Date());
   const nextEvent = upcoming[0];
-  const latest = past.slice(0, 3).map((e) => toCardData(e, locale as Locale, (k) => tTags(k)));
+  const latest = past.slice(0, 3).map((e) => toCardData(e, locale, (k) => tTags(k)));
 
   return (
     <main className="flex-1">
@@ -95,7 +96,7 @@ export default async function HomePage({
                 {nextEvent.title}
                 <span className="text-sfl-gold"> • </span>
                 <span className="text-white/80">
-                  {formatEventDate(locale as Locale, nextEvent.date, nextEvent.endDate)}
+                  {formatEventDate(locale, nextEvent.date, nextEvent.endDate)}
                 </span>
               </p>
             </div>

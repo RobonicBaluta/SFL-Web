@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { assertLocale } from "@/i18n/locale";
 import { getTeam } from "@/lib/team";
 import { alternatesFor } from "@/lib/seo";
 
-// Set to "/images/global/sfl-global.webp" if Step 5 succeeded, otherwise "/images/sfl-flag.jpg"
 const GLOBAL_IMAGE = "/images/global/sfl-global.webp";
 
 export async function generateMetadata({
@@ -11,12 +11,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     title: t("about.title"),
     description: t("about.description"),
-    alternates: alternatesFor("/despre-noi")
+    alternates: alternatesFor(locale, "/despre-noi")
   };
 }
 
@@ -25,10 +25,10 @@ export default async function AboutPage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const locale = assertLocale((await params).locale);
   setRequestLocale(locale);
   const t = await getTranslations("about");
-  const team = getTeam(locale as "ro" | "en");
+  const team = getTeam(locale);
 
   const values = [
     { title: t("value1Title"), text: t("value1Text") },

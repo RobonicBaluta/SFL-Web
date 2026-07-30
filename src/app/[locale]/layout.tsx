@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -21,11 +22,15 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
     metadataBase: new URL(siteConfig.url),
-    title: { default: t("defaultTitle"), template: "%s | Students for Liberty România" },
+    title: { default: t("defaultTitle"), template: `%s | ${siteConfig.name}` },
     description: t("defaultDescription"),
-    icons: { icon: "/images/sfl-romania-logo.png" },
-    openGraph: { images: ["/images/sfl-flag.jpg"] }
-  };
+    openGraph: {
+      type: "website",
+      siteName: siteConfig.name,
+      images: ["/images/sfl-flag.jpg"]
+    },
+    twitter: { card: "summary_large_image" }
+  } satisfies Metadata;
 }
 
 export default async function LocaleLayout({
