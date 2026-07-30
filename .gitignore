@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+public/events/
+coverage/
+*.tsbuildinfo
+.env*
+.vercel
+.DS_Store
