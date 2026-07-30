@@ -3,8 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getTeam } from "@/lib/team";
 import { alternatesFor } from "@/lib/seo";
 
-// Set to "/images/global/sfl-global.jpg" if Step 5 succeeded, otherwise "/images/sfl-flag.jpg"
-const GLOBAL_IMAGE = "/images/global/sfl-global.jpg";
+// Set to "/images/global/sfl-global.webp" if Step 5 succeeded, otherwise "/images/sfl-flag.jpg"
+const GLOBAL_IMAGE = "/images/global/sfl-global.webp";
 
 export async function generateMetadata({
   params
