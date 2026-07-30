@@ -1,0 +1,11 @@
+{
+  "slug": "2026-04-lrr-bucuresti",
+  "date": "2026-04-29",
+  "city": { "ro": "București", "en": "Bucharest" },
+  "venue": { "ro": "Universitatea Româno-Americană, Sala 017", "en": "Romanian-American University, Room 017" },
+  "speakers": ["Fengsuo Zhou", "Octavian Țîcu", "Robert Ciobanu"],
+  "moderators": ["Matei Dragoș-Cristian"],
+  "partners": ["Muzeul Ororilor Comunismului din România"],
+  "tags": ["liberty-road-2026", "conference"],
+  "cover": "IMG_3622.JPG"
+}

@@ -1,0 +1,10 @@
+{
+  "slug": "2026-03-comunismul-rememorat-studentilor",
+  "date": "2026-03-28",
+  "city": { "ro": "București", "en": "Bucharest" },
+  "venue": { "ro": "Galeria Posibilă, Strada Popa Petre 21", "en": "Galeria Posibilă, 21 Popa Petre Street" },
+  "speakers": ["Mariana Beșciu", "Ghenadie Popescu"],
+  "moderators": ["Irina Hasnaș-Hubbard"],
+  "tags": ["conference"],
+  "cover": "IMG_2705.jpg"
+}

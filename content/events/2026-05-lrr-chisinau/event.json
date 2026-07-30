@@ -1,0 +1,11 @@
+{
+  "slug": "2026-05-lrr-chisinau",
+  "date": "2026-05-16",
+  "city": { "ro": "Chișinău", "en": "Chișinău" },
+  "venue": { "ro": "Universitatea de Stat din Moldova, Aula Regina Maria", "en": "Moldova State University, Regina Maria Hall" },
+  "speakers": ["Erekle Gozalishvili", "Jan Mošovský", "Scott Schneider", "Martin Pánek"],
+  "partners": ["Tinerii Diplomați din Republica Moldova", "ELSA Moldova", "MSE", "Consiliul Studenților Economiști"],
+  "sponsors": ["Eco Wine of Moldova"],
+  "tags": ["liberty-road-2026", "conference"],
+  "cover": "DJI_20260516144106_0049_D.JPEG"
+}

@@ -1,0 +1,10 @@
+{
+  "slug": "2026-05-lrr-cluj-napoca",
+  "date": "2026-05-05",
+  "city": { "ro": "Cluj-Napoca", "en": "Cluj-Napoca" },
+  "venue": { "ro": "Turnul Croitorilor, Strada Baba Novac 35", "en": "The Tailors' Tower, 35 Baba Novac Street" },
+  "speakers": ["Radu Nechita", "Adrian Dohotaru"],
+  "moderators": ["Alexia Rus"],
+  "tags": ["liberty-road-2026", "debate"],
+  "cover": "IMG_3880.JPG"
+}

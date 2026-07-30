@@ -1,0 +1,10 @@
+{
+  "slug": "2025-12-revolutia-cauze-si-eveniment-istoric",
+  "date": "2025-12-13",
+  "city": { "ro": "București", "en": "Bucharest" },
+  "venue": { "ro": "Universitatea Româno-Americană", "en": "Romanian-American University" },
+  "speakers": ["Andrei Ursu", "Bogdan Glăvan", "Alexandru Groza"],
+  "partners": ["Liga Pașopt"],
+  "tags": ["conference"],
+  "cover": "IMG_1445.JPG"
+}

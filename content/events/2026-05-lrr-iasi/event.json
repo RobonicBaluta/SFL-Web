@@ -1,0 +1,9 @@
+{
+  "slug": "2026-05-lrr-iasi",
+  "date": "2026-05-14",
+  "city": { "ro": "Iași", "en": "Iași" },
+  "venue": { "ro": "Universitatea Alexandru Ioan Cuza", "en": "Alexandru Ioan Cuza University" },
+  "speakers": ["Jan Mošovský", "Erekle Gozalishvili", "Cristian Păun"],
+  "tags": ["liberty-road-2026", "conference"],
+  "cover": "IMG_4242.JPG"
+}
