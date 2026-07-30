@@ -4,8 +4,7 @@ export const siteConfig = {
   url: "https://sfl-romania.vercel.app",
   // TODO(SFL): completați emailul de contact / set the contact email (empty = hidden)
   contactEmail: "",
-  // TODO(SFL): înlocuiți cu formularul vostru de înscriere / replace with your signup form URL
-  signupFormUrl: "https://studentsforliberty.org/",
+  signupFormUrl: "https://studentsforliberty.org/europe/application/",
   // TODO(SFL): add your real profiles; entries with an empty url are hidden
   social: [
     { name: "Instagram", url: "" },
