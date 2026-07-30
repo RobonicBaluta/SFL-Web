@@ -46,7 +46,7 @@ export default async function EventPage({
 
   return (
     <main className="flex-1">
-      <div className="relative aspect-[21/9] max-h-[420px] w-full overflow-hidden">
+      <div className="relative flex min-h-[min(42.857vw,420px)] w-full items-end overflow-hidden">
         <Image
           src={event.coverUrl}
           alt={event.title}
@@ -54,9 +54,10 @@ export default async function EventPage({
           priority
           sizes="100vw"
           className="object-cover"
+          style={{ objectPosition: event.coverPosition }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-sfl-black/80 to-transparent" />
-        <h1 className="absolute bottom-6 left-1/2 w-full max-w-4xl -translate-x-1/2 px-4 font-display text-3xl font-bold uppercase text-white md:text-5xl">
+        <h1 className="relative mx-auto w-full max-w-4xl px-4 pb-6 font-display text-3xl font-bold uppercase text-white md:text-5xl">
           {event.title}
         </h1>
       </div>

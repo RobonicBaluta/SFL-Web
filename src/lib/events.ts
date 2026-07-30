@@ -8,6 +8,8 @@ export type Locale = (typeof LOCALES)[number];
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
+/** CSS object-position: a keyword, or "X% Y%" measured from the top-left corner. */
+const COVER_POSITION = /^(top|center|bottom|left|right|(100|\d{1,2})% (100|\d{1,2})%)$/;
 const DEFAULT_DIR = path.join(process.cwd(), "content", "events");
 
 const localizedString = z.object({
@@ -27,6 +29,13 @@ export const eventMetaSchema = z.object({
   sponsors: z.array(z.string().min(1)).default([]),
   tags: z.array(z.string().min(1)).default([]),
   cover: z.string().min(1),
+  coverPosition: z
+    .string()
+    .regex(
+      COVER_POSITION,
+      'must be top, center, bottom, left, right, or "X% Y%" (e.g. "50% 25%")'
+    )
+    .default("center"),
   external: z.boolean().default(false)
 });
 
@@ -47,6 +56,7 @@ export type SflEvent = {
   sponsors: string[];
   tags: string[];
   cover: string;
+  coverPosition: string;
   external: boolean;
   title: string;
   excerpt: string;
@@ -116,6 +126,7 @@ export function loadEvent(folder: string, locale: Locale, dir = DEFAULT_DIR): Sf
     sponsors: meta.sponsors,
     tags: meta.tags,
     cover: meta.cover,
+    coverPosition: meta.coverPosition,
     external: meta.external,
     title: fm.data.title,
     excerpt: fm.data.excerpt,

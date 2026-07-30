@@ -1,6 +1,7 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  eventMetaSchema,
   getAllEvents,
   getAllSlugs,
   loadEvent,
@@ -68,6 +69,41 @@ describe("loader", () => {
     expect(() => loadEvent("bad-json", "ro", INVALID)).toThrow(
       /bad-json\/event\.json: invalid JSON/
     );
+  });
+
+  it("defaults coverPosition to center when omitted", () => {
+    expect(loadEvent("2099-01-test-event", "ro", VALID).coverPosition).toBe("center");
+  });
+
+  it("rejects an unusable coverPosition, naming file and field", () => {
+    expect(() => loadEvent("bad-cover-position", "ro", INVALID)).toThrow(
+      /bad-cover-position\/event\.json: coverPosition/
+    );
+  });
+});
+
+describe("coverPosition values", () => {
+  const accepted = ["top", "center", "bottom", "left", "right", "50% 25%", "0% 100%"];
+  const rejected = ["middle-ish", "top left", "50%", "120% 10%", "50%25%", ""];
+
+  it("accepts keywords and X% Y% percentages", () => {
+    for (const value of accepted) {
+      expect(
+        eventMetaSchema.safeParse({ slug: "e", date: "2026-01-01", cover: "c.jpg", coverPosition: value })
+          .success,
+        value
+      ).toBe(true);
+    }
+  });
+
+  it("rejects anything else", () => {
+    for (const value of rejected) {
+      expect(
+        eventMetaSchema.safeParse({ slug: "e", date: "2026-01-01", cover: "c.jpg", coverPosition: value })
+          .success,
+        value
+      ).toBe(false);
+    }
   });
 });
 

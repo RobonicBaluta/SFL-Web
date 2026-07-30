@@ -26,15 +26,20 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-sfl-black">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-3 md:shrink-0"
+          onClick={() => setOpen(false)}
+        >
           <Image
             src="/images/sfl-romania-logo.png"
             alt={t("logoAlt")}
             width={44}
             height={44}
             priority
+            className="w-11 shrink-0"
           />
-          <span className="font-display text-lg font-bold uppercase tracking-wider text-white">
+          <span className="font-display text-sm font-bold uppercase leading-tight tracking-wide text-white sm:text-base md:text-lg md:leading-7 md:tracking-wider">
             {t("siteName")}
           </span>
         </Link>
@@ -53,7 +58,7 @@ export default function Navbar() {
           aria-label={t("menu")}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
-          className="flex flex-col gap-1.5 p-2 md:hidden"
+          className="flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-1.5 md:hidden"
         >
           <span className="h-0.5 w-6 bg-sfl-gold" />
           <span className="h-0.5 w-6 bg-sfl-gold" />

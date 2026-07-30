@@ -9,5 +9,6 @@
   "sponsors": [],
   "tags": ["conference"],
   "cover": "cover.jpg",
+  "coverPosition": "center",
   "external": false
 }

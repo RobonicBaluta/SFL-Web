@@ -10,7 +10,14 @@
    `messages/*.json`; `cover` is a filename from `images/`.
 3. Completează `ro.mdx` ȘI `en.mdx` (ambele obligatorii). / Fill in BOTH `ro.mdx` and `en.mdx`.
 4. Pune fotografiile în `images/` (jpg/png/webp). / Put the photos in `images/`.
-5. Șterge acest README din copia ta, apoi commit + push. Vercel publică automat.
+5. `coverPosition` decide ce parte a imaginii rămâne vizibilă după decupare (implicit
+   `center`). Dacă se taie capetele oamenilor, folosește `top`. Valori permise: `top`,
+   `center`, `bottom`, `left`, `right` sau procente `"X% Y%"` măsurate din colțul
+   stânga-sus (ex. `"50% 25%"` coboară puțin cadrul). / `coverPosition` decides which part
+   of the image stays visible after cropping (default `center`). If heads get cut off, use
+   `top`. Allowed: `top`, `center`, `bottom`, `left`, `right`, or `"X% Y%"` percentages
+   measured from the top-left corner (e.g. `"50% 25%"`).
+6. Șterge acest README din copia ta, apoi commit + push. Vercel publică automat.
    / Delete this README from your copy, then commit + push. Vercel deploys automatically.
 
 Evenimentele cu data în viitor apar la „Viitoare" și trec singure la „Trecute" după ce

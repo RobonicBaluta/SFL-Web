@@ -13,6 +13,8 @@ export type EventCardData = {
   dateLabel: string;
   city?: string;
   coverUrl: string;
+  /** CSS object-position for the cover crop, e.g. "top" or "50% 25%". */
+  coverPosition: string;
   tags: EventTag[];
   external: boolean;
 };
@@ -33,6 +35,7 @@ export default function EventCard({ event }: { event: EventCardData }) {
             fill
             sizes="(min-width: 768px) 33vw, 100vw"
             className="object-cover"
+            style={{ objectPosition: event.coverPosition }}
           />
           <span className="absolute left-0 top-0 bg-sfl-gold px-3 py-1 font-display text-sm font-bold uppercase text-sfl-black">
             {event.dateLabel}

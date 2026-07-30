@@ -14,6 +14,7 @@ export function toCardData(
     dateLabel: formatEventDate(locale, e.date, e.endDate),
     city: e.city,
     coverUrl: e.coverUrl,
+    coverPosition: e.coverPosition,
     tags: e.tags.map((key) => ({ key, label: tagLabel(key) })),
     external: e.external
   };

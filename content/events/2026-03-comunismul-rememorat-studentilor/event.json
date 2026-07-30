@@ -6,5 +6,6 @@
   "speakers": ["Mariana Beșciu", "Ghenadie Popescu"],
   "moderators": ["Irina Hasnaș-Hubbard"],
   "tags": ["conference"],
-  "cover": "IMG_2705.jpg"
+  "cover": "IMG_2705.jpg",
+  "coverPosition": "50% 35%"
 }
