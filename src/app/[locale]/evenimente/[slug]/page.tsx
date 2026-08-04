@@ -74,7 +74,9 @@ export default async function EventPage({
           <EventInfo event={event} locale={locale} />
         </div>
 
-        <div className="mt-8 text-lg leading-relaxed [&_p]:mb-5">
+        {/* Tailwind's reset strips list markers and link styling, so the MDX body
+            restores them here — bodies may use paragraphs, bullet/numbered lists and links. */}
+        <div className="mt-8 text-lg leading-relaxed [&_a]:font-semibold [&_a]:underline [&_a]:decoration-sfl-gold [&_a]:decoration-2 [&_a]:underline-offset-2 [&_li]:mb-1 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-5 [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6">
           <MDXRemote source={event.body} />
         </div>
 

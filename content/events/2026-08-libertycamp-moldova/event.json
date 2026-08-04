@@ -1,0 +1,11 @@
+{
+  "slug": "2026-08-libertycamp-moldova",
+  "date": "2026-08-17",
+  "endDate": "2026-08-22",
+  "city": { "ro": "Horodiște, Republica Moldova", "en": "Horodiște, Moldova" },
+  "venue": { "ro": "Rezervația Naturală Tipova", "en": "Tipova Nature Reserve" },
+  "partners": ["Live and Let Live", "Language of Liberty Institute"],
+  "tags": ["education-program", "international"],
+  "cover": "cover.jpeg",
+  "coverPosition": "50% 40%"
+}

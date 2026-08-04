@@ -4,14 +4,19 @@ import ro from "../messages/ro.json";
 import { getAllEvents, getAllSlugs, LOCALES } from "@/lib/events";
 
 describe("real content", () => {
-  it("has the 9 launch events", () => {
-    expect(getAllSlugs()).toHaveLength(9);
+  // Deliberately not asserting a fixed event count: adding an event is a routine
+  // content change and must never fail the build just for being new.
+  it("has events, each in a YYYY-MM-slug folder", () => {
+    const slugs = getAllSlugs();
+    expect(slugs.length).toBeGreaterThan(0);
+    for (const slug of slugs) expect(slug, slug).toMatch(/^\d{4}-\d{2}-[a-z0-9-]+$/);
   });
 
   it("every event loads in every locale (schema + both mdx files)", () => {
+    const expected = getAllSlugs().length;
     for (const locale of LOCALES) {
       const events = getAllEvents(locale);
-      expect(events).toHaveLength(9);
+      expect(events).toHaveLength(expected);
       for (const e of events) {
         expect(e.title.length).toBeGreaterThan(0);
         expect(e.excerpt.length).toBeGreaterThan(0);
