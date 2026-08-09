@@ -2,6 +2,7 @@ node_modules/
 .next/
 out/
 public/events/
+public/instagram/
 coverage/
 *.tsbuildinfo
 .env*

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventCard from "@/components/EventCard";
+import InstagramSection from "@/components/InstagramSection";
 import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { toCardData } from "@/lib/cards";
@@ -141,6 +142,8 @@ export default async function HomePage({
           </Link>
         </div>
       </section>
+
+      <InstagramSection />
 
       <section className="bg-sfl-gold py-14">
         <div className="mx-auto max-w-4xl px-4 text-center">

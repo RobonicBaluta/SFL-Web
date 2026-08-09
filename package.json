@@ -10,6 +10,7 @@
     "prebuild": "node scripts/sync-event-images.mjs && vitest run --passWithNoTests",
     "build": "next build",
     "start": "next start",
+    "instagram:fetch": "node scripts/instagram-fetch.mjs",
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
     "check": "npm run lint && npm run test && npm run build"

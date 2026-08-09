@@ -43,6 +43,56 @@ Editează `content/team.json` / Edit `content/team.json`:
 Pozele merg în `public/images/team/`. `photo` este opțional. / Photos go in
 `public/images/team/`. `photo` is optional.
 
+## Cum adaugi postări Instagram / How to add Instagram posts
+
+Postările afișate pe pagina principală sunt listate în `content/instagram.json`.
+Imaginile sunt descărcate o singură dată și salvate în repository — site-ul publicat
+nu contactează niciodată Instagram. / The posts shown on the home page are listed in
+`content/instagram.json`. Images are downloaded once and committed — the published
+site never calls Instagram.
+
+### Varianta simplă, fără cont de dezvoltator / The simple way, no developer account
+
+1. În aplicația Instagram: postare → Share → Copy link.
+   / In the Instagram app: post → Share → Copy link.
+2. Adaugă linkul în `content/instagram.json` / Add the link to `content/instagram.json`:
+
+```json
+{ "posts": [{ "url": "https://www.instagram.com/p/XXXXXXXX/" }] }
+```
+
+3. `npm run instagram:fetch` — descarcă imaginea, descrierea și data.
+   / downloads the image, caption and date.
+4. `git add . && git commit && git push` — Vercel publică automat.
+   / Vercel deploys automatically.
+
+Adaugă `"pinned": true` unei postări ca să rămână afișată chiar dacă apar altele mai
+noi. Se afișează primele 4. / Add `"pinned": true` to keep a post from being rotated
+out by newer ones. The first 4 are displayed.
+
+### Varianta automată, cu token / The automatic way, with a token
+
+Necesită un cont Instagram de tip Creator sau Business (conturile personale nu au acces
+la API). / Requires a Creator or Business Instagram account (personal accounts have no
+API access).
+
+1. Instagram → Settings → Account type → switch to Creator.
+2. developers.facebook.com → creează o aplicație → adaugă produsul Instagram → generează
+   un token de lungă durată. / create an app → add the Instagram product → generate a
+   long-lived token.
+3. Creează `.env.local` (nu se urcă niciodată în git / never committed):
+
+```
+INSTAGRAM_TOKEN=...
+```
+
+4. `npm run instagram:fetch` — aduce automat cele mai noi postări.
+   / automatically pulls the newest posts.
+
+Tokenul expiră după ~60 de zile. Expirarea NU afectează site-ul publicat — doar scriptul
+îți va cere un token nou. / The token expires after ~60 days. Expiry does NOT affect the
+live site — only the script will ask for a fresh one.
+
 ## Configurare / Configuration — `src/site.config.ts`
 
 Caută `TODO(SFL)` și completează: domeniul de producție (`url`), emailul de contact,

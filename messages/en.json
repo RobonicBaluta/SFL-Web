@@ -43,6 +43,12 @@
     "emptyPast": "No past events.",
     "externalBadge": "External"
   },
+  "instagram": {
+    "title": "Follow us on Instagram",
+    "handle": "@esflromania",
+    "cta": "See more on Instagram",
+    "postAlt": "Students for Liberty Romania Instagram post"
+  },
   "eventDetail": {
     "date": "Date",
     "period": "Period",
