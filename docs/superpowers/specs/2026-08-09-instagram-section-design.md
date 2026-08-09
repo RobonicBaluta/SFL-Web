@@ -17,7 +17,7 @@ Show recent Students for Liberty România Instagram activity on the home page as
 | Placement | Home page, between the "Cine suntem" strip and the gold join CTA |
 | Image sourcing | Fetched once at curation time by a script, committed to the repo |
 | Auto vs manual | **Both** — Graph API token when available, pasted post URLs as fallback |
-| Account/API reality | Instagram Basic Display API deprecated 2024-12-04; profile pages are login-walled; tokenless oEmbed resolves individual public posts only |
+| Account/API reality | Instagram Basic Display API deprecated 2024-12-04; profile pages are login-walled (no tokenless auto-discovery); individual posts expose image, caption and date via public Open Graph metadata |
 
 ## Why no runtime dependency on Meta
 
@@ -56,7 +56,8 @@ Fields:
 - `url` (required) — canonical post permalink, `https://www.instagram.com/p/<shortcode>/` or `/reel/<shortcode>/`.
 - `image` (required once fetched) — filename inside `content/instagram/images/`.
 - `pinned` (optional, default `false`) — protects the entry from being rotated out by an auto-sync.
-- `postedAt` (optional, ISO date) — recorded for auto-fetched posts; used for ordering.
+- `postedAt` (optional, ISO date) — recorded by the fetch script; used for ordering.
+- `caption` (optional) — the post caption, recorded by the fetch script. Used for the tile's accessible name, falling back to the generic translated alt text when absent. Stored decoded (HTML entities resolved, emoji preserved) and truncated to 200 characters.
 
 Ordering: pinned entries first in file order, then the rest newest-first by `postedAt`, falling back to file order when absent. Only the first `DISPLAY_LIMIT` (4) render on the page.
 
@@ -70,9 +71,16 @@ One command, two input paths, one output shape. It is a **curation-time tool run
    Calls the Instagram Graph API for the account's recent media, takes the newest `AUTO_FETCH_COUNT` (12) items, and appends any whose `url` is not already in the list, recording `postedAt`.
    If the token is missing, expired, or rejected, the script prints a clear, actionable notice and **continues** to step 2 rather than failing.
 
-2. **Resolve missing images (always)**
-   For every entry lacking a local `image`, resolves the post through Meta's tokenless oEmbed endpoint (`graph.facebook.com/instagram_oembed`), downloads the thumbnail into `content/instagram/images/`, and writes the filename back into the JSON. Entries that already have a downloaded image are skipped, so re-running is cheap and idempotent.
-   If oEmbed returns no usable thumbnail for a post, the script reports that post by URL and instructs the user to drop an image into `content/instagram/images/` and set `image` manually. This is the documented manual escape hatch; it requires no code change.
+2. **Resolve missing images (always, no token needed)**
+   For every entry lacking a local `image`, fetches the post permalink with an honest self-identifying user agent (`SFL-Romania-Site/1.0 (+<site url>)`) and reads the page's Open Graph metadata — the same public link-preview data Instagram publishes for WhatsApp, Slack and Twitter previews. From it the script takes:
+   - `og:image` → the square post thumbnail, downloaded into `content/instagram/images/`
+   - `og:title` / `og:description` → the caption text and posted date, stored as `caption` and `postedAt`
+
+   Entries that already have a downloaded image are skipped, so re-running is cheap and idempotent.
+
+   **Verified 2026-08-09** against `https://www.instagram.com/p/Dbqm8pdosiZ/`: returns a valid 640×639 JPEG plus caption and date, with no token and no credentials. Note that `graph.facebook.com/instagram_oembed` is *not* usable for this — tokenless it returns only `version, provider_name, provider_url, type, width, html`, with **no `thumbnail_url`**, and its `html` is an empty placeholder shell whose image is injected client-side. The Open Graph route is therefore the tokenless image source; oEmbed is not used at all.
+
+   If Open Graph parsing fails for a post (Instagram changes behaviour, or the post is private), the script reports that post by URL and instructs the user to drop an image into `content/instagram/images/` and set `image` manually. This is the documented last-resort escape hatch; it requires no code change.
 
 3. **Prune (auto entries only)**
    Non-pinned entries beyond a retention count (20) are dropped from the JSON and their images deleted, keeping the repo from growing without bound. Pinned and manually added entries are never pruned automatically.
@@ -114,6 +122,8 @@ A new `instagram` namespace in `messages/ro.json` and `messages/en.json`, coveri
 - Prune logic: pinned and manual entries survive; non-pinned auto entries beyond the retention count are removed.
 - Translation parity: `instagram` namespace keys exist in both locales (covered by the existing parity test).
 - Empty list renders no section.
+- Open Graph parsing: given saved fixture HTML from a real post, the parser extracts image URL, caption and date, decodes HTML entities (`&quot;`, `&#x1f914;`) correctly, and truncates the caption; given HTML without the tags, it reports the post as unresolvable rather than throwing.
+- Caption handling: a tile with a caption uses it as its accessible name; a tile without one falls back to the translated generic alt text.
 
 Script network behaviour is not unit-tested against the live API; the merge, ordering, prune and validation logic are pure functions tested directly, with network I/O kept in a thin, separately-invoked layer.
 
@@ -131,7 +141,9 @@ The bilingual README gains an "Adaugă postări Instagram / Add Instagram posts"
 
 ## Known constraints, stated plainly
 
-- Fetching an account's latest posts **requires** the account to be Creator or Business and a Meta app token. Personal accounts have no API access. This one-time setup is the account owner's to perform.
-- Long-lived tokens expire in roughly 60 days. Because the token is used only at curation time, expiry never affects the deployed site.
-- Tokenless oEmbed serves public posts only and may be rate-limited; it is used only for posts added by hand.
-- Whether oEmbed returns a usable thumbnail for a given post must be confirmed against a real SFL România post before implementation. If it does not, the manual-image path documented above is the fallback and no design change is required.
+- **Auto-discovery of an account's latest posts requires a token.** There is no tokenless way to list a profile's recent posts: profile pages are login-walled and return no post data to an unauthenticated fetch (verified). This needs the account switched to Creator or Business plus a Meta app token, and is the account owner's one-time setup to perform.
+- Long-lived tokens expire in roughly 60 days. Because the token is used only at curation time, expiry never affects the deployed site — only the convenience of auto-discovery.
+- The tokenless Open Graph route (verified working 2026-08-09) covers **individual posts you paste**, returning a square ~640px thumbnail plus caption and date. It depends on Instagram continuing to serve link-preview metadata to non-browser user agents. If that stops, the manual-image drop remains as the fallback and no redesign is needed.
+- The token path additionally yields full-resolution `media_url` images rather than the square Open Graph crop, so token-fetched tiles are sharper. Both are more than adequate for a square tile.
+- Instagram's CDN URLs are signed and expire, which is precisely why images are downloaded at curation time and committed rather than hotlinked.
+- All fetched content is SFL România's own material, stored and displayed by SFL România.
