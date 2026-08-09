@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import sharp from "sharp";
 import { mergePosts, parseOpenGraph, prunePosts, shortcodeOf } from "./instagram-og.mjs";
 
 const UA = "SFL-Romania-Site/1.0 (+https://sfl-romania.vercel.app)";
@@ -120,6 +121,21 @@ async function main() {
   }
 
   for (const post of posts) delete post.remoteImage;
+
+  // Record each image's natural size so tiles render in the post's own shape
+  // instead of being cropped to a square. Backfills entries fetched earlier.
+  for (const post of posts) {
+    if (!post.image || (post.width && post.height)) continue;
+    const file = path.join(IMAGES_DIR, post.image);
+    if (!fs.existsSync(file)) continue;
+    try {
+      const { width, height } = await sharp(file).metadata();
+      post.width = width;
+      post.height = height;
+    } catch (e) {
+      console.warn(`! ${post.image} — could not read dimensions: ${e.message}`);
+    }
+  }
 
   const { kept, dropped } = prunePosts(
     posts.filter((p) => p.image),

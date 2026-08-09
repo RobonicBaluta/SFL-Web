@@ -16,7 +16,10 @@ export const instagramPostSchema = z.object({
   image: z.string().min(1),
   pinned: z.boolean().default(false),
   postedAt: z.string().optional(),
-  caption: z.string().optional()
+  caption: z.string().optional(),
+  /** Natural pixel size, recorded by the fetch script so tiles keep the post's own shape. */
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional()
 });
 
 export const instagramFileSchema = z.object({

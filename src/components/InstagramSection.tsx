@@ -24,24 +24,25 @@ export default async function InstagramSection() {
         </a>
       </div>
 
-      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {/* Columns rather than a grid: posts keep their own portrait/landscape/square
+          shape, so nothing is cropped, and the tiles still pack without gaps. */}
+      <ul className="columns-2 gap-4 md:columns-4">
         {posts.map((post) => (
-          <li key={post.url}>
+          <li key={post.url} className="mb-4 break-inside-avoid">
             <a
               href={post.url}
               target="_blank"
               rel="noopener noreferrer"
               className="group block overflow-hidden border-2 border-sfl-black transition-shadow hover:shadow-[6px_6px_0_0_var(--color-sfl-gold)]"
             >
-              <div className="relative aspect-square">
-                <Image
-                  src={`/instagram/${post.image}`}
-                  alt={post.caption ?? t("postAlt")}
-                  fill
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+              <Image
+                src={`/instagram/${post.image}`}
+                alt={post.caption ?? t("postAlt")}
+                width={post.width ?? 1080}
+                height={post.height ?? 1080}
+                sizes="(min-width: 768px) 25vw, 50vw"
+                className="h-auto w-full transition-transform duration-300 group-hover:scale-105"
+              />
             </a>
           </li>
         ))}
