@@ -48,6 +48,19 @@ export function shortcodeOf(url) {
   return m ? m[1] : null;
 }
 
+/**
+ * Full-size image for a post.
+ *
+ * Preferred over og:image, whose URL carries a hard crop instruction
+ * (`stp=c409.0.1229.1228a_…`) that squares off landscape and portrait posts, and which
+ * for video posts is a rendition with a play badge burned into the pixels. This endpoint
+ * returns the post as published — 1080px, native aspect ratio, no badge.
+ */
+export function fullImageUrl(url) {
+  const shortcode = shortcodeOf(url);
+  return shortcode ? `https://www.instagram.com/p/${shortcode}/media/?size=l` : null;
+}
+
 /** Reads the public link-preview metadata. Returns null when there is no image. */
 export function parseOpenGraph(html) {
   const imageUrl = metaContent(html, "og:image");

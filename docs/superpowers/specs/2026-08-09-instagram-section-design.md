@@ -72,9 +72,11 @@ One command, two input paths, one output shape. It is a **curation-time tool run
    If the token is missing, expired, or rejected, the script prints a clear, actionable notice and **continues** to step 2 rather than failing.
 
 2. **Resolve missing images (always, no token needed)**
-   For every entry lacking a local `image`, fetches the post permalink with an honest self-identifying user agent (`SFL-Romania-Site/1.0 (+<site url>)`) and reads the page's Open Graph metadata — the same public link-preview data Instagram publishes for WhatsApp, Slack and Twitter previews. From it the script takes:
-   - `og:image` → the square post thumbnail, downloaded into `content/instagram/images/`
-   - `og:title` / `og:description` → the caption text and posted date, stored as `caption` and `postedAt`
+   For every entry lacking a local `image`, the script fetches, with an honest self-identifying user agent (`SFL-Romania-Site/1.0 (+<site url>)`):
+   - `instagram.com/p/<shortcode>/media/?size=l` → the **image as published**, 1080px, native aspect ratio, downloaded into `content/instagram/images/`
+   - the post permalink's Open Graph metadata (`og:title` / `og:description`) → caption text and posted date, stored as `caption` and `postedAt`
+
+   **Why not `og:image` for the picture (verified 2026-08-09):** its URL carries a hard crop instruction — e.g. `stp=c409.0.1229.1228a_dst-jpg_e35_s640x640_tt6` — which squares off landscape and portrait posts, and it is capped at 640px. For video posts that rendition additionally has a play badge composited into the pixels. Editing the `stp` parameter to remove the crop returns HTTP 403, because the URL signature covers it. The `/media/?size=l` endpoint has no crop instruction, returns the native aspect ratio at 1080px, and carries no play badge. Measured on the four launch posts: 1080×1080, 1080×814, 1080×1350 and 1080×764, versus og:image's 640×639, 640×482, 512×640 and 609×609 — the last of which had silently squashed a landscape post into a square.
 
    Entries that already have a downloaded image are skipped, so re-running is cheap and idempotent.
 
@@ -103,7 +105,9 @@ A malformed list fails the build loudly rather than shipping a broken tile.
 
 **Placement:** home page only, as the last content section before the gold join CTA. This preserves the page's alternating colour rhythm (gold hero → black next-event → white events → black "Cine suntem" → **white Instagram** → gold join → black footer) and puts recent activity directly before the sign-up ask.
 
-**Layout:** full-width white band. Heading `URMĂREȘTE-NE PE INSTAGRAM` in the display font, uppercase, with the handle `@esflromania` beneath it in gold. Below, a grid of square tiles — 4 columns from `md` up, 2 columns below — each tile reusing the established card treatment: 2px black border, gold offset shadow and slight image zoom on hover. Tiles link to the post with `target="_blank" rel="noopener noreferrer"`. The section closes with a `VEZI MAI MULT PE INSTAGRAM` button in the existing black-on-gold style, linking to `siteConfig.social` Instagram entry.
+**Layout:** full-width white band. Heading `URMĂREȘTE-NE PE INSTAGRAM` in the display font, uppercase, with the handle `@esflromania` beneath it in gold. Below, a grid — 4 columns from `md` up, 2 columns below — where each tile keeps its post's **native aspect ratio** rather than being cropped to a square, so the whole post is visible; tracks are `minmax(0, 1fr)` and items align to the top, giving even columns with varying tile heights. Each tile reuses the established card treatment: 2px black border, gold offset shadow and slight image zoom on hover.
+
+A CSS multi-column ("masonry") arrangement was tried first and rejected: percentage-width replaced elements inside a column box fall back to their intrinsic width, so the 1080px images overflowed a 375px viewport by 753px. Grid's `minmax(0, 1fr)` tracks do not have this failure mode. Tiles link to the post with `target="_blank" rel="noopener noreferrer"`. The section closes with a `VEZI MAI MULT PE INSTAGRAM` button in the existing black-on-gold style, linking to `siteConfig.social` Instagram entry.
 
 **Empty state:** if the list is empty or the file is absent, the entire section does not render. No placeholder, no gap.
 

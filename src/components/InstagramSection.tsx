@@ -24,11 +24,12 @@ export default async function InstagramSection() {
         </a>
       </div>
 
-      {/* Columns rather than a grid: posts keep their own portrait/landscape/square
-          shape, so nothing is cropped, and the tiles still pack without gaps. */}
-      <ul className="columns-2 gap-4 md:columns-4">
+      {/* Grid with items-start, not a multi-column layout: posts keep their own
+          portrait/landscape/square shape (nothing cropped) while grid's minmax(0,1fr)
+          tracks keep the 1080px images from overflowing the viewport. */}
+      <ul className="grid grid-cols-2 items-start gap-4 md:grid-cols-4">
         {posts.map((post) => (
-          <li key={post.url} className="mb-4 break-inside-avoid">
+          <li key={post.url} className="min-w-0">
             <a
               href={post.url}
               target="_blank"

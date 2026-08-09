@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { mergePosts, parseOpenGraph, prunePosts, shortcodeOf } from "./instagram-og.mjs";
+import {
+  fullImageUrl,
+  mergePosts,
+  parseOpenGraph,
+  prunePosts,
+  shortcodeOf
+} from "./instagram-og.mjs";
 
 const UA = "SFL-Romania-Site/1.0 (+https://sfl-romania.vercel.app)";
 const AUTO_FETCH_COUNT = 12;
@@ -97,16 +103,22 @@ async function main() {
       continue;
     }
 
+    // Open Graph still supplies caption and date; its image is only a last resort
+    // because it is cropped square and badges video posts.
     let imageUrl = post.remoteImage;
-    if (!imageUrl) {
+    if (!post.caption || !post.postedAt) {
       const og = await resolveViaOpenGraph(post.url);
-      if (!og) {
-        unresolved.push(post.url);
-        continue;
+      if (og) {
+        post.caption = post.caption ?? og.caption;
+        post.postedAt = post.postedAt ?? og.postedAt;
+        imageUrl = imageUrl ?? og.imageUrl;
       }
-      imageUrl = og.imageUrl;
-      post.caption = post.caption ?? og.caption;
-      post.postedAt = post.postedAt ?? og.postedAt;
+    }
+    // Prefer the as-published rendition: native aspect ratio, no play badge.
+    imageUrl = post.remoteImage ?? fullImageUrl(post.url) ?? imageUrl;
+    if (!imageUrl) {
+      unresolved.push(post.url);
+      continue;
     }
 
     const filename = `${shortcode}.jpg`;
