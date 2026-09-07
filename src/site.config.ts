@@ -8,7 +8,7 @@ export const siteConfig = {
   // TODO(SFL): add your real profiles; entries with an empty url are hidden
   social: [
     { name: "Instagram", url: "https://www.instagram.com/esflromania/" },
-    { name: "Facebook", url: "" },
+    { name: "Facebook", url: "https://www.facebook.com/sflromania/" },
     { name: "TikTok", url: "" },
     { name: "LinkedIn", url: "" }
   ]
