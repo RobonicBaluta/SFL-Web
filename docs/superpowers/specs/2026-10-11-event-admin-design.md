@@ -31,9 +31,11 @@ GitHub main ──push──▶ Vercel build (prebuild tests incl. MDX compile) 
 
 - **Routes.** `/admin` (login or event list), `/admin/new` and `/admin/edit/[slug]`. They live outside `[locale]` with their own root layout, and the i18n middleware matcher excludes `admin`. `robots.txt` disallows `/admin` and `/api/admin`, and the pages carry `noindex`.
 - **Reading** uses one GitHub GraphQL query that returns every event folder's `event.json`, `ro.mdx`, `en.mdx` and image filenames. The editor therefore sees a save immediately, before the deploy finishes.
-- **Writing** uses the Git Data API: get head → get its tree → create a tree on top of it (text files inline, photos by blob SHA, deletions as `sha: null`) → create a commit → move `main`. If the ref update is rejected as non-fast-forward (a concurrent push), the save retries from the new head, up to 3 times. One save makes one commit, with the message `admin: add|update|delete event "<title>"`.
-- **Photos** are resized in the browser (longest side 2400 px, JPEG quality 0.85, retried at 0.7 if still over 3.5 MB). They are uploaded one per request to `POST /api/admin/photo`, which creates a GitHub blob and returns its SHA, and Save then references the SHAs. This keeps every request under Vercel's 4.5 MB body limit and works on mobile data.
-- **Deploy status.** After a save, the page polls `GET /api/admin/deploy?sha=`, which reads GitHub's combined commit status (Vercel reports there): *Waiting → Publishing → Live ✓ / Build failed*. A failed build leaves the previous version live.
+- **Writing** uses the Git Data API: get head → get its tree → create a tree on top of it (text files inline, photos by blob SHA, deletions as `sha: null`) → create a commit → move `main`. If the ref update is rejected as non-fast-forward (a concurrent push), the save retries from the new head, up to 3 times. Any other 422 (branch protection, rulesets) is shown with GitHub's message. One save makes one commit: `admin: add|update event "<title>"` or `admin: delete event <slug>`.
+- **Stale forms.** The edit page sends a version of the event (a hash of its three text files and photo names) with every save. If the event changed since the form was loaded (in another tab or on another device), the save is refused and the owner is asked to reload. An old tab therefore can't undo newer edits or delete photos added since.
+- **Photos** are resized in the browser (longest side 2400 px, JPEG quality 0.85, retried at 0.7 and 0.5 while over 2.8 MB, which stays under the limit after base64). They are uploaded one per request to `POST /api/admin/photo`, which creates a GitHub blob and returns its SHA, and Save then references the SHAs. This keeps every request under Vercel's 4.5 MB body limit and works on mobile data.
+- **Deploy status.** After a save, the page polls `GET /api/admin/deploy?sha=`, which reads GitHub's combined commit status. It uses the status named exactly `Vercel` (or `Vercel – <project>`) and ignores other Vercel checks such as *Preview Comments*: *Waiting → Publishing → Live ✓ / Build failed*. A failed build leaves the previous version live.
+- **Thumbnails** of saved photos come from the live site's image optimizer (`/_next/image`), because originals can exceed Vercel's 4.5 MB response limit. A photo that is committed but not deployed yet falls back to `GET /api/admin/photo`, which serves it from GitHub.
 
 ## Configuration (Vercel → Settings → Environment Variables)
 
@@ -45,11 +47,11 @@ If either secret is missing, `/admin` says which one instead of failing.
 
 ## Security
 
-- **Session:** cookie `sfl_admin` = `<expiresAt>.<HMAC-SHA256(key = ADMIN_PASSWORD, "sfl-admin:" + expiresAt)>`. It is httpOnly, `SameSite=Strict`, `Secure` in production, and lasts 30 days. Changing the password invalidates every session.
+- **Session:** cookie `sfl_admin` = `<expiresAt>.<HMAC-SHA256(key = scrypt(ADMIN_PASSWORD), "sfl-admin:" + expiresAt)>`. The scrypt key is derived once per process, so a stolen cookie can't be used to guess the password quickly offline. It is httpOnly, `SameSite=Strict`, `Secure` in production, and lasts 30 days. Changing the password invalidates every session.
 - **Login:** constant-time comparison of SHA-256 digests. A wrong password waits 1 s before the answer.
 - **CSRF:** every mutating route requires a valid session AND an `Origin` header that matches the request host.
 - **Paths:** slugs must match `^\d{4}-\d{2}-[a-z0-9-]+$` and photo names `^[a-z0-9][a-z0-9-]*\.jpg$`. Every path is built on the server under `content/events/<slug>/`. An upload must start with the JPEG magic bytes and be at most 4 MB.
-- **Text:** user text cannot inject MDX/JSX (see below). Length limits apply: title 200, summary 400, body 20 000, 200 per name, 30 names per list, 40 photos per event.
+- **Text:** user text cannot inject MDX/JSX (see below). Length limits apply: title 200, summary 400, body 20 000, 200 per name, 100 lines per name list, 100 photos per event.
 
 ## Event text and MDX
 

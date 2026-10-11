@@ -5,7 +5,9 @@
 type Json = Record<string, unknown>;
 export type Call = { method: string; path: string; body: Json | null; headers: Headers };
 
-export function fakeGitHub(options: { status?: number; graphql?: Json; statuses?: Json[] } = {}) {
+export function fakeGitHub(
+  options: { status?: number; graphql?: Json; statuses?: Json[]; refRejection?: string } = {}
+) {
   const API = "https://api.test";
   let n = 0;
   const id = (prefix: string) => (prefix + String(++n)).padEnd(40, "0");
@@ -83,6 +85,7 @@ export function fakeGitHub(options: { status?: number; graphql?: Json; statuses?
     }
 
     if (method === "PATCH" && path === "/repos/o/r/git/refs/heads/main") {
+      if (options.refRejection) return json(422, { message: options.refRejection });
       if (concurrentPushes > 0) {
         concurrentPushes--;
         const other = id("othr");

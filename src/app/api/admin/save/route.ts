@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { guard, jsonError } from "@/lib/admin/auth";
 import { commitChanges, GitHubError, readEvents } from "@/lib/admin/github";
-import { checkSave, saveChanges, savePayloadSchema } from "@/lib/admin/save";
+import { filesFromDraft } from "@/lib/admin/draft";
+import { checkSave, eventVersion, saveChanges, savePayloadSchema } from "@/lib/admin/save";
 import { KNOWN_TAG_KEYS } from "@/lib/admin/tags";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +32,9 @@ export async function POST(req: NextRequest) {
     const verb = payload.mode === "create" ? "add" : "update";
     const title = payload.draft.ro.title.trim().replace(/\s+/g, " ");
     const sha = await commitChanges(setup.github, `admin: ${verb} event "${title}"`, changes);
-    return NextResponse.json({ sha, slug: payload.draft.slug });
+    // What the next readEvents will see, so the open form can keep saving.
+    const version = eventVersion(filesFromDraft(payload.draft), payload.draft.images);
+    return NextResponse.json({ sha, slug: payload.draft.slug, version });
   } catch (e) {
     if (e instanceof GitHubError) return jsonError(502, e.message);
     throw e;

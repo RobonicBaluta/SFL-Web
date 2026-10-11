@@ -1,22 +1,12 @@
-import Link from "next/link";
 import { draftFromFiles, type EventDraft } from "@/lib/admin/draft";
-import { readEvents } from "@/lib/admin/github";
+import { GitHubError, readEvents, type RepoEvent } from "@/lib/admin/github";
+import { eventVersion } from "@/lib/admin/save";
 import { ADMIN_TAGS } from "@/lib/admin/tags";
 import EventForm from "../../_components/EventForm";
+import Problem from "../../_components/Problem";
 import { requireLogin } from "../../_lib/gate";
 
 export const dynamic = "force-dynamic";
-
-function Problem({ message }: { message: string }) {
-  return (
-    <div className="border-2 border-red-700 bg-white p-6" role="alert">
-      <p>{message}</p>
-      <Link href="/admin" className="mt-3 inline-block font-semibold underline">
-        Back to events
-      </Link>
-    </div>
-  );
-}
 
 export default async function EditEventPage({
   params,
@@ -29,7 +19,13 @@ export default async function EditEventPage({
   const { slug } = await params;
   const { saved } = await searchParams;
 
-  const event = (await readEvents(setup.github)).find((e) => e.slug === slug);
+  let event: RepoEvent | undefined;
+  try {
+    event = (await readEvents(setup.github)).find((e) => e.slug === slug);
+  } catch (e) {
+    if (!(e instanceof GitHubError)) throw e;
+    return <Problem message={e.message} />;
+  }
   if (!event) return <Problem message="This event doesn't exist (it may have been deleted)." />;
   const { eventJson, roMdx, enMdx } = event.files;
   if (!eventJson || !roMdx || !enMdx) {
@@ -43,5 +39,14 @@ export default async function EditEventPage({
     return <Problem message={`This event's files can't be read (${(e as Error).message}). A developer needs to fix it.`} />;
   }
 
-  return <EventForm mode="edit" initial={draft} tags={ADMIN_TAGS} takenSlugs={[]} savedSha={saved} />;
+  return (
+    <EventForm
+      mode="edit"
+      initial={draft}
+      baseVersion={eventVersion(event.files, event.images)}
+      tags={ADMIN_TAGS}
+      takenSlugs={[]}
+      savedSha={saved}
+    />
+  );
 }

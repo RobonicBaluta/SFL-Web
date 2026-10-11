@@ -13,11 +13,18 @@ export default function LoginForm() {
     e.preventDefault();
     setBusy(true);
     setError("");
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ password })
-    });
+    let res: Response;
+    try {
+      res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password })
+      });
+    } catch {
+      setError("No connection. Try again.");
+      setBusy(false);
+      return;
+    }
     if (res.ok) {
       router.refresh();
       return;

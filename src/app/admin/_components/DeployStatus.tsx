@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type State = "waiting" | "publishing" | "live" | "failed" | "unknown";
+type State = "waiting" | "publishing" | "live" | "failed" | "unknown" | "error";
 
 const POLL_MS = 5000;
 const GIVE_UP_MS = 15 * 60 * 1000;
@@ -11,6 +11,7 @@ const GIVE_UP_MS = 15 * 60 * 1000;
 export default function DeployStatus({ sha, viewHref }: { sha: string; viewHref?: string }) {
   const [state, setState] = useState<State>("waiting");
   const [logUrl, setLogUrl] = useState<string | null>(null);
+  const [problem, setProblem] = useState("");
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -19,13 +20,17 @@ export default function DeployStatus({ sha, viewHref }: { sha: string; viewHref?
     async function poll() {
       try {
         const res = await fetch(`/api/admin/deploy?sha=${sha}`);
-        if (res.ok) {
-          const body = (await res.json()) as { state: State; url: string | null };
-          if (stopped) return;
-          setState(body.state);
-          setLogUrl(body.url);
-          if (body.state === "live" || body.state === "failed") return;
+        const body = (await res.json().catch(() => ({}))) as { state?: State; url?: string | null; error?: string };
+        if (stopped) return;
+        if (!res.ok) {
+          // Expired login, missing token permission…: retrying won't help.
+          setState("error");
+          setProblem(body.error ?? `Couldn't check the deploy (${res.status}).`);
+          return;
         }
+        setState(body.state ?? "waiting");
+        setLogUrl(body.url ?? null);
+        if (body.state === "live" || body.state === "failed") return;
       } catch {
         // Network blip: try again on the next tick.
       }
@@ -71,6 +76,7 @@ export default function DeployStatus({ sha, viewHref }: { sha: string; viewHref?
       {state === "waiting" && "Waiting for Vercel to start publishing…"}
       {state === "publishing" && "Publishing… this usually takes 1–2 minutes."}
       {state === "unknown" && "Vercel hasn't reported back. Check the Vercel dashboard."}
+      {state === "error" && `Publishing should start on its own, but its progress can't be shown: ${problem}`}
     </div>
   );
 }

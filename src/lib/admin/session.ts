@@ -1,4 +1,4 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, scryptSync, timingSafeEqual } from "node:crypto";
 
 export const SESSION_COOKIE = "sfl_admin";
 export const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -20,9 +20,21 @@ export function passwordMatches(input: string, password: string): boolean {
   return timingSafeEqual(sha256(input), sha256(password));
 }
 
-// Keyed with the password itself, so changing ADMIN_PASSWORD logs out every device.
+// Keyed with a slow derivation of the password: changing ADMIN_PASSWORD logs out
+// every device, and a stolen cookie can't be used to guess the password quickly.
+// Derived once per process (~50 ms).
+const keys = new Map<string, Buffer>();
+function sessionKey(password: string): Buffer {
+  let key = keys.get(password);
+  if (!key) {
+    key = scryptSync(password, "sfl-admin-session", 32, { N: 2 ** 14, r: 8, p: 1 });
+    keys.set(password, key);
+  }
+  return key;
+}
+
 const mac = (password: string, expires: string) =>
-  createHmac("sha256", password).update(`sfl-admin:${expires}`).digest("hex");
+  createHmac("sha256", sessionKey(password)).update(`sfl-admin:${expires}`).digest("hex");
 
 export function createSessionToken(password: string, now: number): string {
   const expires = String(now + SESSION_MAX_AGE_MS);

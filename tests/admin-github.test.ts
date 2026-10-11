@@ -51,6 +51,12 @@ describe("commitChanges", () => {
     expect(gh.calls.filter((c) => c.method === "PATCH")).toHaveLength(3);
   });
 
+  it("reports a branch-protection refusal instead of retrying it", async () => {
+    const gh = fakeGitHub({ refRejection: "Protected branch update failed for refs/heads/main." });
+    await expect(commitChanges(gh.config, "m", CHANGES)).rejects.toThrow(/Protected branch update failed/);
+    expect(gh.calls.filter((c) => c.method === "PATCH")).toHaveLength(1);
+  });
+
   it("explains a rejected token", async () => {
     const gh = fakeGitHub({ status: 401 });
     await expect(commitChanges(gh.config, "m", CHANGES)).rejects.toThrow(/GITHUB_TOKEN/);
@@ -139,6 +145,13 @@ describe("deployStatus", () => {
 
   it("is waiting until Vercel reports", async () => {
     expect(await deployStatus(fakeGitHub().config, "abc")).toEqual({ state: "waiting", url: null });
+  });
+
+  it("ignores Vercel's other checks such as Preview Comments", async () => {
+    const gh = fakeGitHub({
+      statuses: [{ context: "Vercel Preview Comments", state: "success", target_url: "https://vercel.com/c" }, vercel("pending")]
+    });
+    expect(await deployStatus(gh.config, "abc")).toEqual({ state: "publishing", url: "https://vercel.com/x" });
   });
 
   it("follows Vercel's status", async () => {

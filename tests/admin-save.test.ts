@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { EventDraft } from "@/lib/admin/draft";
-import { checkSave, saveChanges, savePayloadSchema, type SavePayload } from "@/lib/admin/save";
+import {
+  checkSave,
+  eventVersion,
+  saveChanges,
+  savePayloadSchema,
+  type SavePayload
+} from "@/lib/admin/save";
 
 const SHA = "a".repeat(40);
 
@@ -26,6 +32,7 @@ const draft = (overrides: Partial<EventDraft> = {}): EventDraft => ({
 
 const create = (d: EventDraft, newPhotos = [{ name: "afis.jpg", sha: SHA }]): SavePayload => ({
   mode: "create",
+  baseVersion: "",
   draft: d,
   newPhotos
 });
@@ -43,7 +50,7 @@ describe("checkSave", () => {
   });
 
   it("refuses to edit an event that is gone", async () => {
-    const payload: SavePayload = { mode: "edit", draft: draft(), newPhotos: [] };
+    const payload: SavePayload = { mode: "edit", baseVersion: "", draft: draft(), newPhotos: [] };
     expect((await checkSave(payload, CTX)).join()).toMatch(/no longer exists/);
   });
 
@@ -86,6 +93,7 @@ describe("checkSave", () => {
   it("rejects an uploaded photo name that would overwrite an existing one", async () => {
     const payload: SavePayload = {
       mode: "edit",
+      baseVersion: eventVersion({}, ["cover.jpeg"]),
       draft: draft({ slug: "2026-05-lrr-iasi", cover: "cover.jpeg", images: ["cover.jpeg"] }),
       newPhotos: [{ name: "cover.jpeg", sha: SHA }]
     };
@@ -98,7 +106,46 @@ describe("checkSave", () => {
   });
 });
 
+describe("eventVersion", () => {
+  const files = { eventJson: "{}", roMdx: "ro", enMdx: "en" };
+
+  it("ignores the order photos are listed in", () => {
+    expect(eventVersion(files, ["a.jpg", "b.jpg"])).toBe(eventVersion(files, ["b.jpg", "a.jpg"]));
+  });
+
+  it("changes when the text or the photos change", () => {
+    const v = eventVersion(files, ["a.jpg"]);
+    expect(eventVersion({ ...files, roMdx: "ro!" }, ["a.jpg"])).not.toBe(v);
+    expect(eventVersion(files, ["a.jpg", "b.jpg"])).not.toBe(v);
+  });
+});
+
+describe("checkSave on a form opened earlier", () => {
+  const files = { eventJson: "{}", roMdx: "ro", enMdx: "en" };
+  const ctx = { existing: [{ slug: "2026-05-lrr-iasi", images: ["cover.jpeg"], files }], knownTags: ["debate"] };
+  const edit = (baseVersion: string): SavePayload => ({
+    mode: "edit",
+    baseVersion,
+    draft: draft({ slug: "2026-05-lrr-iasi", cover: "cover.jpeg", images: ["cover.jpeg"] }),
+    newPhotos: []
+  });
+
+  it("accepts the save when nothing changed in between", async () => {
+    expect(await checkSave(edit(eventVersion(files, ["cover.jpeg"])), ctx)).toEqual([]);
+  });
+
+  it("refuses when the event was changed elsewhere since the form was loaded", async () => {
+    const before = eventVersion(files, []); // a photo was added on another device since
+    expect((await checkSave(edit(before), ctx)).join()).toMatch(/changed somewhere else/);
+  });
+});
+
 describe("savePayloadSchema", () => {
+  it("counts blank lines in name lists towards nothing that fails the form", () => {
+    const names = [...Array.from({ length: 30 }, (_, i) => `Name ${i}`), "", "", ""];
+    expect(savePayloadSchema.safeParse(create(draft({ speakers: names }))).success).toBe(true);
+  });
+
   it("enforces length limits", () => {
     const long = draft({ ro: { title: "x".repeat(201), excerpt: "E", body: "B" } });
     expect(savePayloadSchema.safeParse(create(long)).success).toBe(false);
@@ -114,6 +161,7 @@ describe("saveChanges", () => {
   it("writes the text files, adds uploaded photos and removes dropped ones", () => {
     const payload: SavePayload = {
       mode: "edit",
+      baseVersion: eventVersion({}, ["cover.jpeg"]),
       draft: draft({ slug: "2026-05-lrr-iasi", cover: "noua.jpg", images: ["pastrata.jpg", "noua.jpg"] }),
       newPhotos: [
         { name: "noua.jpg", sha: SHA },

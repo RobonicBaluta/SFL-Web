@@ -34,7 +34,7 @@ async function errorFor(cfg: GitHubConfig, res: Response): Promise<GitHubError> 
   }
   if (res.status === 403) {
     return new GitHubError(
-      `GITHUB_TOKEN isn't allowed to do this. It needs "Contents: Read and write" on ${repoName(cfg)}.`
+      `GITHUB_TOKEN isn't allowed to do this. On ${repoName(cfg)} it needs "Contents: Read and write" and "Commit statuses: Read-only".`
     );
   }
   if (res.status === 404) {
@@ -221,8 +221,12 @@ export async function commitChanges(
       force: false
     });
     if (res.ok) return commit.sha;
-    // 422 = not a fast-forward: something was pushed since we read the head.
     if (res.status !== 422) throw await errorFor(cfg, res);
+    // "Update is not a fast forward": something was pushed since we read the
+    // head, so rebuild on top of it. Other 422s (branch protection, rulesets)
+    // won't go away by retrying.
+    const { message: reason = "" } = (await res.json().catch(() => ({}))) as { message?: string };
+    if (!/fast.forward/i.test(reason)) throw new GitHubError(`GitHub refused the change: ${reason}`);
   }
   throw new GitHubError("The site was changed by someone else at the same moment. Try saving again.");
 }
@@ -242,7 +246,11 @@ export async function deployStatus(
     "GET",
     `${repoPath(cfg)}/commits/${encodeURIComponent(sha)}/status`
   );
-  const vercel = combined.statuses.find((s) => s.context.startsWith("Vercel"));
+  // The deployment itself reports as "Vercel" (or "Vercel – <project>"); other
+  // Vercel checks such as "Vercel Preview Comments" succeed immediately.
+  const vercel =
+    combined.statuses.find((s) => s.context === "Vercel") ??
+    combined.statuses.find((s) => /^Vercel/.test(s.context) && !/comments/i.test(s.context));
   if (!vercel) return { state: "waiting", url: null };
   const state: DeployState =
     vercel.state === "success" ? "live" : vercel.state === "pending" ? "publishing" : "failed";

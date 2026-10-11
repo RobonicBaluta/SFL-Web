@@ -8,6 +8,7 @@ import { eventSlug, photoName } from "@/lib/admin/naming";
 import { resizePhoto } from "../_lib/resize-photo";
 import CoverFraming from "./CoverFraming";
 import DeployStatus from "./DeployStatus";
+import Photo from "./Photo";
 
 type Tag = { key: string; label: string };
 type NewPhoto = { name: string; sha: string; preview: string };
@@ -46,15 +47,20 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
+const LEAVE_WARNING = "You have unsaved changes. Leave this page without saving them?";
+
 export default function EventForm({
   mode,
   initial,
+  baseVersion: loadedVersion = "",
   tags,
   takenSlugs,
   savedSha
 }: {
   mode: "create" | "edit";
   initial: EventDraft;
+  /** Version of the event this form was loaded from (edit mode). */
+  baseVersion?: string;
   tags: Tag[];
   takenSlugs: string[];
   savedSha?: string;
@@ -70,6 +76,7 @@ export default function EventForm({
   const [busy, setBusy] = useState(false);
   const [deploySha, setDeploySha] = useState(savedSha);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [baseVersion, setBaseVersion] = useState(loadedVersion);
   // Names already in the repository or handed out in this session, so a new
   // photo can never overwrite an existing file.
   const takenNames = useRef(new Set(initial.images));
@@ -77,9 +84,24 @@ export default function EventForm({
   const dirty = JSON.stringify(draft) !== baseline || newPhotos.length > 0;
   useEffect(() => {
     if (!dirty) return;
+    // Reload / closing the tab…
     const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    // …and in-app links (client-side navigation never fires beforeunload).
+    // Capture phase on document runs before Next's <Link> handler.
+    const guardLinks = (e: MouseEvent) => {
+      const link = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!link || link.target === "_blank" || link.origin !== window.location.origin) return;
+      if (!window.confirm(LEAVE_WARNING)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
     window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
+    document.addEventListener("click", guardLinks, true);
+    return () => {
+      window.removeEventListener("beforeunload", warn);
+      document.removeEventListener("click", guardLinks, true);
+    };
   }, [dirty]);
 
   const update = (patch: Partial<EventDraft>) => setDraft((d) => ({ ...d, ...patch }));
@@ -102,9 +124,20 @@ export default function EventForm({
     update({ [field]: { ...draft[field], [locale]: value } as Localized });
 
   const previews = new Map(newPhotos.map((p) => [p.name, p.preview]));
-  const photoSrc = (name: string) =>
-    previews.get(name) ??
-    `/api/admin/photo?slug=${encodeURIComponent(initial.slug)}&name=${encodeURIComponent(name)}`;
+  /**
+   * New photos: the local preview. Saved ones: a resized copy from the live
+   * site's image optimizer (originals can be 6 MB), falling back to GitHub for
+   * photos committed but not deployed yet.
+   */
+  const photoUrls = (name: string, width: number) => {
+    const preview = previews.get(name);
+    if (preview) return { src: preview };
+    const path = `/events/${initial.slug}/${name}`;
+    return {
+      src: `/_next/image?url=${encodeURIComponent(path)}&w=${width}&q=75`,
+      fallback: `/api/admin/photo?slug=${encodeURIComponent(initial.slug)}&name=${encodeURIComponent(name)}`
+    };
+  };
 
   async function addPhotos(files: File[]) {
     setPhotoErrors([]);
@@ -136,18 +169,31 @@ export default function EventForm({
       const images = d.images.filter((n) => n !== name);
       return { ...d, images, cover: d.cover === name ? (images[0] ?? "") : d.cover };
     });
-    setNewPhotos((list) => list.filter((p) => p.name !== name));
+    setNewPhotos((list) => {
+      const removed = list.find((p) => p.name === name);
+      if (removed) URL.revokeObjectURL(removed.preview);
+      return list.filter((p) => p !== removed);
+    });
   }
 
   async function post(url: string, payload: unknown) {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch {
+      setErrors([
+        "No connection. The change may or may not have been saved: open the event list to check before trying again."
+      ]);
+      return null;
+    }
     const body = (await res.json().catch(() => ({}))) as {
       sha?: string;
       slug?: string;
+      version?: string;
       error?: string;
       errors?: string[];
     };
@@ -159,10 +205,14 @@ export default function EventForm({
     e.preventDefault();
     setBusy(true);
     setErrors([]);
+    // Photos may still finish uploading while this request runs; only the ones
+    // sent now are committed by it.
+    const sent = newPhotos;
     const result = await post("/api/admin/save", {
       mode,
+      baseVersion,
       draft,
-      newPhotos: newPhotos.map(({ name, sha }) => ({ name, sha }))
+      newPhotos: sent.map(({ name, sha }) => ({ name, sha }))
     });
     if (!result) {
       setBusy(false);
@@ -175,7 +225,9 @@ export default function EventForm({
       return;
     }
     setBaseline(JSON.stringify(draft));
-    setNewPhotos([]);
+    setBaseVersion(result.version ?? "");
+    setNewPhotos((list) => list.filter((p) => !sent.includes(p)));
+    sent.forEach((p) => URL.revokeObjectURL(p.preview));
     setDeploySha(result.sha);
     setBusy(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -374,7 +426,7 @@ export default function EventForm({
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {gallery.map((name) => (
               <li key={name} className="border-2 border-sfl-black bg-white">
-                <img src={photoSrc(name)} alt={name} className="aspect-[4/3] w-full object-cover" />
+                <Photo {...photoUrls(name, 640)} alt={name} className="aspect-[4/3] w-full object-cover" />
                 <div className="space-y-1 p-2 text-xs">
                   <p className="truncate" title={name}>
                     {name}
@@ -431,7 +483,7 @@ export default function EventForm({
       {draft.cover && (
         <Section title="Cover framing">
           <CoverFraming
-            src={photoSrc(draft.cover)}
+            {...photoUrls(draft.cover, 1080)}
             position={draft.coverPosition}
             onChange={(coverPosition) => update({ coverPosition })}
           />

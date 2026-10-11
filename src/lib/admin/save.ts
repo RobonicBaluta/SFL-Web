@@ -1,7 +1,8 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { eventMetaSchema } from "@/lib/events";
 import { mdxProblem } from "@/lib/mdx-check";
-import { filesFromDraft, type EventDraft } from "./draft";
+import { filesFromDraft, type EventDraft, type EventFiles } from "./draft";
 import { encodeBody } from "./text";
 
 // Server only: validates what the admin form sends and turns it into file changes.
@@ -10,15 +11,17 @@ export const SLUG_PATTERN = /^\d{4}-\d{2}-[a-z0-9-]+$/;
 /** Names the admin gives new photos (see naming.ts). Existing photos keep theirs. */
 const NEW_PHOTO_NAME = /^[a-z0-9][a-z0-9-]*\.jpg$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const MAX_PHOTOS = 40;
+const MAX_PHOTOS = 100;
 
 const text = (max: number) => z.string().max(max);
 const localized = z.object({ ro: text(200), en: text(200) });
-const nameList = z.array(text(200)).max(30);
+// Raw textarea lines, blank ones included; filesFromDraft drops the blanks.
+const nameList = z.array(text(200)).max(100);
 const localeText = z.object({ title: text(200), excerpt: text(400), body: text(20_000) });
 
 export const savePayloadSchema = z.object({
   mode: z.enum(["create", "edit"]),
+  baseVersion: text(100),
   draft: z.object({
     slug: text(80),
     date: text(10),
@@ -42,11 +45,17 @@ export const savePayloadSchema = z.object({
     .max(MAX_PHOTOS)
 });
 
-export type SavePayload = { mode: "create" | "edit"; draft: EventDraft; newPhotos: { name: string; sha: string }[] };
+export type SavePayload = {
+  mode: "create" | "edit";
+  /** eventVersion of the event when the form was loaded ("" when creating). */
+  baseVersion: string;
+  draft: EventDraft;
+  newPhotos: { name: string; sha: string }[];
+};
 
 /** What the server knows about the events currently in the repository. */
 export type SaveContext = {
-  existing: { slug: string; images: string[] }[];
+  existing: { slug: string; images: string[]; files?: Partial<EventFiles> }[];
   knownTags: string[];
 };
 
@@ -54,6 +63,16 @@ const LANGUAGES = [
   ["ro", "Romanian"],
   ["en", "English"]
 ] as const;
+
+/**
+ * Fingerprint of an event as stored on GitHub. A form remembers the version it
+ * was loaded from, so a tab left open on another device can't silently undo
+ * newer edits or delete photos added since.
+ */
+export function eventVersion(files: Partial<EventFiles>, images: string[]): string {
+  const state = [files.eventJson ?? "", files.roMdx ?? "", files.enMdx ?? "", [...images].sort()];
+  return createHash("sha256").update(JSON.stringify(state)).digest("hex").slice(0, 16);
+}
 
 /** Every reason the save would be refused or break the build; empty when it is fine. */
 export async function checkSave(payload: SavePayload, ctx: SaveContext): Promise<string[]> {
@@ -67,6 +86,10 @@ export async function checkSave(payload: SavePayload, ctx: SaveContext): Promise
     problems.push(`An event with the web address ${draft.slug} already exists. Change the address.`);
   } else if (mode === "edit" && !current) {
     problems.push("This event no longer exists (it may have been deleted).");
+  } else if (mode === "edit" && current && payload.baseVersion !== eventVersion(current.files ?? {}, current.images)) {
+    problems.push(
+      "This event was changed somewhere else (another tab or device) since you opened it. Reload the page to get the latest version, then make your change again."
+    );
   }
 
   if (!ISO_DATE.test(draft.date)) problems.push("Pick the event date.");

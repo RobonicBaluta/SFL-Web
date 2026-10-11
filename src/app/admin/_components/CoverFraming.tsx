@@ -1,5 +1,7 @@
 "use client";
 
+import Photo from "./Photo";
+
 const KEYWORDS: Record<string, [number, number]> = {
   center: [50, 50],
   top: [50, 0],
@@ -23,10 +25,12 @@ const clamp = (n: number) => Math.min(100, Math.max(0, Math.round(n)));
  */
 export default function CoverFraming({
   src,
+  fallback,
   position,
   onChange
 }: {
   src: string;
+  fallback?: string;
   position: string;
   onChange: (position: string) => void;
 }) {
@@ -44,8 +48,9 @@ export default function CoverFraming({
       <div>
         <p className="text-sm">Tap the most important spot (faces, title).</p>
         <div className="relative mt-2 inline-block">
-          <img
+          <Photo
             src={src}
+            fallback={fallback}
             alt="Cover"
             onClick={pick}
             className="block max-h-80 w-auto max-w-full cursor-crosshair border-2 border-sfl-black"
@@ -61,13 +66,13 @@ export default function CoverFraming({
         <div>
           <p className="text-sm font-semibold">Event card</p>
           <div className="mt-1 aspect-[16/9] w-full max-w-sm overflow-hidden border-2 border-sfl-black">
-            <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: position }} />
+            <Photo src={src} fallback={fallback} alt="" className="h-full w-full object-cover" style={{ objectPosition: position }} />
           </div>
         </div>
         <div>
           <p className="text-sm font-semibold">Event page header</p>
           <div className="mt-1 aspect-[21/9] w-full overflow-hidden border-2 border-sfl-black">
-            <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: position }} />
+            <Photo src={src} fallback={fallback} alt="" className="h-full w-full object-cover" style={{ objectPosition: position }} />
           </div>
         </div>
       </div>
