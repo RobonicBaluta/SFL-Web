@@ -84,11 +84,13 @@ The event list at `/admin` shows upcoming and past events (title, date, photo co
 - `src/lib/admin/text.ts`: MDX-safe encode/decode (no Node imports, so client and server can both use it).
 - `src/lib/admin/naming.ts`: slugify and photo file naming (no Node imports).
 - `src/lib/admin/draft.ts`: the `EventDraft` type and the files ↔ draft conversion (server only, because it uses `gray-matter`; client components import only its types).
-- `src/lib/admin/validate.ts`: server-side validation with `eventMetaSchema`, the known tags and an MDX compile (server only).
-- `src/lib/admin/github.ts`: GraphQL read, blob upload, commit with retry, deploy status (`fetch` is injected for tests).
-- `src/lib/admin/auth.ts`: Next.js glue: env config, cookie, `requireAdmin` and the same-origin check.
+- `src/lib/admin/save.ts`: the save payload schema and limits, `checkSave` (server-side validation with `eventMetaSchema`, the known tags and an MDX compile) and `saveChanges` (the file changes a save commits). Server only.
+- `src/lib/mdx-check.ts`: compiles a body with `@mdx-js/mdx` and names the failing line. Shared by `checkSave` and the content test.
+- `src/lib/admin/tags.ts`: the tags both languages translate, as offered by the form.
+- `src/lib/admin/github.ts`: GraphQL read, raw file read (thumbnails), blob upload, commit with retry, deploy status (`fetch` is injected for tests).
+- `src/lib/admin/auth.ts`: Next.js glue: env config, the session cookie, `guard` for routes and the same-origin check.
 - `src/app/admin/**`: layout, pages, client components (`_components/`) and browser photo resizing.
-- `src/app/api/admin/{login,logout,photo,save,delete,deploy}/route.ts`.
+- `src/app/api/admin/{login,logout,photo,save,delete,deploy}/route.ts`. `GET /api/admin/photo` serves a photo from GitHub, so thumbnails work before a deploy finishes.
 
 ## Testing
 

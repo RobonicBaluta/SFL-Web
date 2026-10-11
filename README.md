@@ -30,6 +30,40 @@ Dacă datele sunt greșite (dată invalidă, lipsește o traducere, cover inexis
 eșuează cu un mesaj care numește fișierul și câmpul. / If the data is wrong (invalid date,
 missing translation, missing cover), the build fails naming the file and field.
 
+## Pagina de admin / The admin page
+
+`/admin` (ex. `https://sfl-romania.vercel.app/admin`) permite adăugarea, editarea și
+ștergerea evenimentelor și adăugarea pozelor, de pe telefon sau calculator, fără cod.
+Fiecare salvare devine un commit pe `main`; Vercel publică în ~1–2 minute, iar pagina
+arată când modificarea e live. / `/admin` lets you add, edit and delete events and add
+photos from a phone or computer, without code. Each save becomes a commit on `main`;
+Vercel publishes it in ~1–2 minutes and the page shows when the change is live.
+
+### Configurare (o singură dată) / Setup (once)
+
+1. **Token GitHub** — logat ca proprietarul repo-ului: GitHub → Settings → Developer
+   settings → Personal access tokens → **Fine-grained tokens** → Generate new token.
+   / Signed in as the repository owner: GitHub → Settings → Developer settings →
+   Personal access tokens → **Fine-grained tokens** → Generate new token.
+   - Repository access: **Only select repositories** → `RobonicBaluta/SFL-Web`
+   - Permissions: **Contents: Read and write**, **Commit statuses: Read-only**
+2. **Vercel** → proiectul → Settings → Environment Variables (Production) /
+   the project → Settings → Environment Variables (Production):
+   - `ADMIN_PASSWORD` — parola paginii, minim 12 caractere / the page password, at least 12 characters
+   - `GITHUB_TOKEN` — tokenul de la pasul 1 / the token from step 1
+3. **Redeploy** (Deployments → ⋯ → Redeploy) — variabilele noi intră în vigoare doar
+   după o publicare nouă. / New variables only take effect after a new deployment.
+
+Când tokenul expiră, pagina de admin spune asta; generează unul nou și înlocuiește
+`GITHUB_TOKEN` în Vercel. Site-ul public nu este afectat. Schimbarea parolei îi
+deconectează pe toți. / When the token expires the admin page says so; generate a new
+one and replace `GITHUB_TOKEN` in Vercel. The public site is unaffected. Changing the
+password logs everyone out.
+
+Textele pot conține orice caractere (`{`, `<` etc.) — pagina le salvează astfel încât să
+nu strice publicarea. / Texts can contain any characters (`{`, `<`…) — the page stores them
+so they can't break the build.
+
 ## Cum adaugi un membru în echipă / How to add a team member
 
 Editează `content/team.json` / Edit `content/team.json`:

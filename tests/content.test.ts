@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import en from "../messages/en.json";
 import ro from "../messages/ro.json";
 import { getAllEvents, getAllSlugs, LOCALES } from "@/lib/events";
+import { mdxProblem } from "@/lib/mdx-check";
 
 describe("real content", () => {
   // Deliberately not asserting a fixed event count: adding an event is a routine
@@ -33,6 +34,16 @@ describe("real content", () => {
       for (const tag of e.tags) {
         expect(roTags[tag], `ro tag ${tag}`).toBeTruthy();
         expect(enTags[tag], `en tag ${tag}`).toBeTruthy();
+      }
+    }
+  });
+
+  // The event page compiles each body as MDX at build time; a stray "{" or "<"
+  // in hand-written or admin-written text would otherwise fail the deploy.
+  it("every event body compiles as MDX", async () => {
+    for (const locale of LOCALES) {
+      for (const e of getAllEvents(locale)) {
+        expect(await mdxProblem(e.body), `${e.slug}/${locale}.mdx`).toBeNull();
       }
     }
   });

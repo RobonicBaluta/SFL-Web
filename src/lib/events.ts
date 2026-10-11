@@ -7,7 +7,7 @@ export const LOCALES = ["ro", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
+export const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
 /** CSS object-position: a keyword, or "X% Y%" measured from the top-left corner. */
 const COVER_POSITION = /^(top|center|bottom|left|right|(100|\d{1,2})% (100|\d{1,2})%)$/;
 const DEFAULT_DIR = path.join(process.cwd(), "content", "events");

@@ -4,6 +4,8 @@ export const siteConfig = {
   url: "https://sfl-romania.vercel.app",
   // TODO(SFL): completați emailul de contact / set the contact email (empty = hidden)
   contactEmail: "",
+  // Where the /admin page commits event changes (Vercel deploys from this branch).
+  repository: { owner: "RobonicBaluta", name: "SFL-Web", branch: "main" },
   signupFormUrl: "https://studentsforliberty.org/europe/application/",
   // TODO(SFL): add your real profiles; entries with an empty url are hidden
   social: [

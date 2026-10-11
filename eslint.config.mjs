@@ -13,6 +13,12 @@ const config = [
         { allowedStrings: ["RO", "EN", "•", "–", "|", "©"] }
       ]
     }
+  },
+  {
+    // The single-user admin page is English-only and outside the public RO/EN
+    // translations; its thumbnails come from an authenticated API route.
+    files: ["src/app/admin/**/*.tsx"],
+    rules: { "react/jsx-no-literals": "off", "@next/next/no-img-element": "off" }
   }
 ];
 
