@@ -1,0 +1,9 @@
+{
+  "slug": "2026-10-chat-control",
+  "date": "2026-10-13",
+  "city": { "ro": "București", "en": "Bucharest" },
+  "venue": { "ro": "Strada Aurel Vlaicu 47", "en": "47 Aurel Vlaicu Street" },
+  "tags": ["debate"],
+  "cover": "cover.jpg",
+  "coverPosition": "50% 43%"
+}
