@@ -1,0 +1,21 @@
+{
+  "slug": "2026-11-romania-la-rascruce",
+  "date": "2026-11-05",
+  "city": {
+    "ro": "București",
+    "en": "Bucharest"
+  },
+  "venue": {
+    "ro": "Sala Agora, Centrul de Tineret FNT (The Youth), Strada General Christian Tell nr. 22",
+    "en": "Agora Hall, FNT Youth Center (The Youth), 22 General Christian Tell Street"
+  },
+  "speakers": [
+    "Armand Goșu, Associate Professor, PhD",
+    "Nicolae Petrescu, Assistant Lecturer, PhD Candidate"
+  ],
+  "tags": [
+    "conference"
+  ],
+  "cover": "romania-securitate-poster.jpg",
+  "coverPosition": "34% 73%"
+}
