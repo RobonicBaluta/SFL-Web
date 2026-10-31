@@ -2,10 +2,10 @@ import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventCard from "@/components/EventCard";
 import InstagramSection from "@/components/InstagramSection";
+import NextEvent from "@/components/NextEvent";
 import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { toCardData } from "@/lib/cards";
-import { formatEventDate } from "@/lib/dates";
 import { getAllEvents, splitEvents } from "@/lib/events";
 import { alternatesFor } from "@/lib/seo";
 
@@ -86,30 +86,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      {nextEvent && (
-        <section className="bg-sfl-black py-6">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4">
-            <div>
-              <p className="font-display text-sm font-bold uppercase text-sfl-gold">
-                {t("nextEventLabel")}
-              </p>
-              <p className="font-display text-2xl font-bold uppercase text-white">
-                {nextEvent.title}
-                <span className="text-sfl-gold"> • </span>
-                <span className="text-white/80">
-                  {formatEventDate(locale, nextEvent.date, nextEvent.endDate)}
-                </span>
-              </p>
-            </div>
-            <Link
-              href={{ pathname: "/evenimente/[slug]", params: { slug: nextEvent.slug } }}
-              className="bg-sfl-gold px-6 py-3 font-display font-bold uppercase text-sfl-black hover:bg-white"
-            >
-              {t("nextEventCta")}
-            </Link>
-          </div>
-        </section>
-      )}
+      {nextEvent && <NextEvent event={nextEvent} locale={locale} />}
 
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-8 flex items-center justify-between">
