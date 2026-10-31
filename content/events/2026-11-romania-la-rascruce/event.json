@@ -9,9 +9,10 @@
     "ro": "Sala Agora, Centrul de Tineret FNT (The Youth), Strada General Christian Tell nr. 22",
     "en": "Agora Hall, FNT Youth Center (The Youth), 22 General Christian Tell Street"
   },
+  "registrationUrl": "https://docs.google.com/forms/d/e/1FAIpQLSegFTk-VrusurpsFn7g9btXOLCpCMnoc4Ldjgh5odCIqZfljw/viewform?usp=header",
   "speakers": [
-    "Armand Goșu, Associate Professor, PhD",
-    "Nicolae Petrescu, Assistant Lecturer, PhD Candidate"
+    "Armand Goșu",
+    "Nicolae Petrescu"
   ],
   "tags": [
     "conference"

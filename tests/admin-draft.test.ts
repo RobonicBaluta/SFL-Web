@@ -11,6 +11,7 @@ const FULL: EventDraft = {
   endDate: "2026-10-14",
   city: { ro: "București", en: "Bucharest" },
   venue: { ro: "Strada Aurel Vlaicu 47", en: "47 Aurel Vlaicu Street" },
+  registrationUrl: "https://forms.gle/abc123",
   speakers: ["Ana Pop"],
   moderators: ["Ion Ion"],
   partners: ["Partener"],
@@ -36,6 +37,7 @@ const FULL_JSON = `{
     "ro": "Strada Aurel Vlaicu 47",
     "en": "47 Aurel Vlaicu Street"
   },
+  "registrationUrl": "https://forms.gle/abc123",
   "speakers": [
     "Ana Pop"
   ],
@@ -70,6 +72,7 @@ const minimal = (overrides: Partial<EventDraft>): EventDraft => ({
   endDate: "",
   city: { ro: "", en: "" },
   venue: { ro: "", en: "" },
+  registrationUrl: "",
   speakers: [],
   moderators: [],
   partners: [],
@@ -107,6 +110,13 @@ describe("filesFromDraft", () => {
       filesFromDraft(minimal({ speakers: ["  Ana Pop ", "", "  "] })).eventJson
     );
     expect(json.speakers).toEqual(["Ana Pop"]);
+  });
+
+  it("trims the registration link and leaves out a blank one", () => {
+    const link = (registrationUrl: string) =>
+      JSON.parse(filesFromDraft(minimal({ registrationUrl })).eventJson).registrationUrl;
+    expect(link("  https://forms.gle/x  ")).toBe("https://forms.gle/x");
+    expect(link("   ")).toBeUndefined();
   });
 });
 

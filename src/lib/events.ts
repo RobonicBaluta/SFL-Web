@@ -10,6 +10,8 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 export const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
 /** CSS object-position: a keyword, or "X% Y%" measured from the top-left corner. */
 const COVER_POSITION = /^(top|center|bottom|left|right|(100|\d{1,2})% (100|\d{1,2})%)$/;
+/** A full web address; anything else (javascript:, relative paths) is refused. */
+export const WEB_LINK = /^https?:\/\/\S+$/;
 const DEFAULT_DIR = path.join(process.cwd(), "content", "events");
 
 const localizedString = z.object({
@@ -23,6 +25,10 @@ export const eventMetaSchema = z.object({
   endDate: z.string().regex(ISO_DATE, "must be YYYY-MM-DD").optional(),
   city: localizedString.optional(),
   venue: localizedString.optional(),
+  registrationUrl: z
+    .string()
+    .regex(WEB_LINK, "must be a full link starting with https://")
+    .optional(),
   speakers: z.array(z.string().min(1)).default([]),
   moderators: z.array(z.string().min(1)).default([]),
   partners: z.array(z.string().min(1)).default([]),
@@ -50,6 +56,7 @@ export type SflEvent = {
   endDate?: string;
   city?: string;
   venue?: string;
+  registrationUrl?: string;
   speakers: string[];
   moderators: string[];
   partners: string[];
@@ -120,6 +127,7 @@ export function loadEvent(folder: string, locale: Locale, dir = DEFAULT_DIR): Sf
     endDate: meta.endDate,
     city: meta.city?.[locale],
     venue: meta.venue?.[locale],
+    registrationUrl: meta.registrationUrl,
     speakers: meta.speakers,
     moderators: meta.moderators,
     partners: meta.partners,
@@ -158,18 +166,21 @@ export function todayInBucharest(now: Date): string {
   }).format(now);
 }
 
+/** An event stays upcoming through its last day, in Bucharest time. */
+export function isUpcoming(e: Pick<SflEvent, "date" | "endDate">, now: Date): boolean {
+  return (e.endDate ?? e.date) >= todayInBucharest(now);
+}
+
 export function splitEvents(
   events: SflEvent[],
   now: Date
 ): { upcoming: SflEvent[]; past: SflEvent[] } {
-  const today = todayInBucharest(now);
-  const lastDay = (e: SflEvent) => e.endDate ?? e.date;
   return {
     upcoming: events
-      .filter((e) => lastDay(e) >= today)
+      .filter((e) => isUpcoming(e, now))
       .sort((a, b) => a.date.localeCompare(b.date)),
     past: events
-      .filter((e) => lastDay(e) < today)
+      .filter((e) => !isUpcoming(e, now))
       .sort((a, b) => b.date.localeCompare(a.date))
   };
 }

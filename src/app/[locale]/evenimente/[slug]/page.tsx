@@ -6,10 +6,12 @@ import EventInfo from "@/components/EventInfo";
 import Gallery from "@/components/Gallery";
 import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
-import { getAllSlugs, getEventBySlug } from "@/lib/events";
+import { getAllSlugs, getEventBySlug, isUpcoming } from "@/lib/events";
 import { alternatesFor } from "@/lib/seo";
 
 export const dynamicParams = false;
+// Hourly, like the event lists, so the Register button goes away once the event is over.
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
@@ -73,6 +75,17 @@ export default async function EventPage({
         <div className="mt-6">
           <EventInfo event={event} locale={locale} />
         </div>
+
+        {event.registrationUrl && isUpcoming(event, new Date()) && (
+          <a
+            href={event.registrationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block bg-sfl-black px-8 py-3 font-display font-bold uppercase text-sfl-gold hover:bg-sfl-gray"
+          >
+            {t("register")}
+          </a>
+        )}
 
         {/* Tailwind's reset strips list markers and link styling, so the MDX body
             restores them here — bodies may use paragraphs, bullet/numbered lists and links. */}

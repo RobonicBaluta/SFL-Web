@@ -16,6 +16,7 @@ const draft = (overrides: Partial<EventDraft> = {}): EventDraft => ({
   endDate: "",
   city: { ro: "București", en: "Bucharest" },
   venue: { ro: "", en: "" },
+  registrationUrl: "",
   speakers: [],
   moderators: [],
   partners: [],
@@ -52,6 +53,14 @@ describe("checkSave", () => {
   it("refuses to edit an event that is gone", async () => {
     const payload: SavePayload = { mode: "edit", baseVersion: "", draft: draft(), newPhotos: [] };
     expect((await checkSave(payload, CTX)).join()).toMatch(/no longer exists/);
+  });
+
+  it("accepts a registration link and rejects one that isn't a full web address", async () => {
+    expect(await checkSave(create(draft({ registrationUrl: "https://forms.gle/x" })), CTX)).toEqual([]);
+    for (const registrationUrl of ["forms.gle/x", "javascript:alert(1)"]) {
+      const problems = await checkSave(create(draft({ registrationUrl })), CTX);
+      expect(problems.join()).toMatch(/registration link/);
+    }
   });
 
   it("rejects a malformed web address", async () => {
@@ -150,6 +159,13 @@ describe("savePayloadSchema", () => {
     const long = draft({ ro: { title: "x".repeat(201), excerpt: "E", body: "B" } });
     expect(savePayloadSchema.safeParse(create(long)).success).toBe(false);
     expect(savePayloadSchema.safeParse(create(draft())).success).toBe(true);
+  });
+
+  it("accepts a draft from a form loaded before the registration link existed", () => {
+    const old: Partial<EventDraft> = draft();
+    delete old.registrationUrl;
+    const parsed = savePayloadSchema.safeParse(create(old as EventDraft));
+    expect(parsed.success && parsed.data.draft.registrationUrl).toBe("");
   });
 
   it("only accepts git object ids as photo shas", () => {

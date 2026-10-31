@@ -65,12 +65,33 @@ export default async function NextEvent({ event, locale }: { event: SflEvent; lo
 
           <p className="mt-6 text-lg text-white/80">{event.excerpt}</p>
 
-          <Link
-            href={href}
-            className="mt-8 inline-block bg-sfl-gold px-6 py-3 font-display font-bold uppercase text-sfl-black hover:bg-white"
-          >
-            {t("nextEventCta")}
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-4">
+            {event.registrationUrl ? (
+              <>
+                <a
+                  href={event.registrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-sfl-gold px-6 py-3 font-display font-bold uppercase text-sfl-black hover:bg-white"
+                >
+                  {tDetail("register")}
+                </a>
+                <Link
+                  href={href}
+                  className="border-2 border-sfl-gold px-6 py-3 font-display font-bold uppercase text-sfl-gold transition-colors hover:bg-sfl-gold hover:text-sfl-black"
+                >
+                  {t("nextEventCta")}
+                </Link>
+              </>
+            ) : (
+              <Link
+                href={href}
+                className="bg-sfl-gold px-6 py-3 font-display font-bold uppercase text-sfl-black hover:bg-white"
+              >
+                {t("nextEventCta")}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>

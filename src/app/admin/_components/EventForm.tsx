@@ -371,6 +371,22 @@ export default function EventForm({
         ))}
       </Section>
 
+      <Section title="Registration">
+        <Field
+          label="Registration link (optional)"
+          hint="E.g. a Google Forms link. Until the event is over, the site shows a Register button on the home page and the event page."
+        >
+          <input
+            type="url"
+            maxLength={500}
+            placeholder="https://forms.gle/…"
+            value={draft.registrationUrl}
+            onChange={(e) => update({ registrationUrl: e.target.value })}
+            className={inputClass}
+          />
+        </Field>
+      </Section>
+
       <Section title="People">
         <div className="grid gap-4 sm:grid-cols-2">
           {LISTS.map(([field, label]) => (

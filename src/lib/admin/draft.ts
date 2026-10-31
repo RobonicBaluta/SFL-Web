@@ -14,6 +14,7 @@ export type EventDraft = {
   endDate: string;
   city: Localized;
   venue: Localized;
+  registrationUrl: string;
   speakers: string[];
   moderators: string[];
   partners: string[];
@@ -38,6 +39,7 @@ export function emptyDraft(): EventDraft {
     endDate: "",
     city: { ro: "", en: "" },
     venue: { ro: "", en: "" },
+    registrationUrl: "",
     speakers: [],
     moderators: [],
     partners: [],
@@ -74,6 +76,7 @@ export function draftFromFiles(files: EventFiles, images: string[]): EventDraft 
     endDate: meta.endDate ?? "",
     city: meta.city ?? { ro: "", en: "" },
     venue: meta.venue ?? { ro: "", en: "" },
+    registrationUrl: meta.registrationUrl ?? "",
     speakers: meta.speakers,
     moderators: meta.moderators,
     partners: meta.partners,
@@ -123,6 +126,7 @@ export function filesFromDraft(draft: EventDraft): EventFiles {
     endDate: draft.endDate || undefined,
     city: place(draft.city),
     venue: place(draft.venue),
+    registrationUrl: draft.registrationUrl.trim() || undefined,
     speakers: names(draft.speakers),
     moderators: names(draft.moderators),
     partners: names(draft.partners),

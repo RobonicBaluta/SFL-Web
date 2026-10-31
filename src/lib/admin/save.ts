@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { eventMetaSchema } from "@/lib/events";
+import { eventMetaSchema, WEB_LINK } from "@/lib/events";
 import { mdxProblem } from "@/lib/mdx-check";
 import { filesFromDraft, type EventDraft, type EventFiles } from "./draft";
 import { encodeBody } from "./text";
@@ -28,6 +28,8 @@ export const savePayloadSchema = z.object({
     endDate: text(10),
     city: localized,
     venue: localized,
+    // Defaulted so a form loaded before this field existed can still save.
+    registrationUrl: text(500).default(""),
     speakers: nameList,
     moderators: nameList,
     partners: nameList,
@@ -95,6 +97,11 @@ export async function checkSave(payload: SavePayload, ctx: SaveContext): Promise
   if (!ISO_DATE.test(draft.date)) problems.push("Pick the event date.");
   else if (draft.endDate && (!ISO_DATE.test(draft.endDate) || draft.endDate < draft.date)) {
     problems.push("The end date is before the start date.");
+  }
+
+  const registrationUrl = draft.registrationUrl.trim();
+  if (registrationUrl && !WEB_LINK.test(registrationUrl)) {
+    problems.push("The registration link must be a full web address starting with https://.");
   }
 
   for (const [locale, language] of LANGUAGES) {

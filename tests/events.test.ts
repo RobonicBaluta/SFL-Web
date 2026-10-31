@@ -107,6 +107,22 @@ describe("coverPosition values", () => {
   });
 });
 
+describe("registrationUrl", () => {
+  const parse = (registrationUrl: string) =>
+    eventMetaSchema.safeParse({ slug: "e", date: "2026-01-01", cover: "c.jpg", registrationUrl }).success;
+
+  it("accepts a full http(s) link", () => {
+    expect(parse("https://forms.gle/abc")).toBe(true);
+    expect(parse("http://example.com/form?x=1")).toBe(true);
+  });
+
+  it("rejects relative, script and blank values", () => {
+    for (const value of ["forms.gle/abc", "javascript:alert(1)", "/inscriere", ""]) {
+      expect(parse(value), value).toBe(false);
+    }
+  });
+});
+
 describe("splitEvents", () => {
   const noon = new Date("2026-07-30T12:00:00Z");
 

@@ -17,7 +17,12 @@
    of the image stays visible after cropping (default `center`). If heads get cut off, use
    `top`. Allowed: `top`, `center`, `bottom`, `left`, `right`, or `"X% Y%"` percentages
    measured from the top-left corner (e.g. `"50% 25%"`).
-6. Șterge acest README din copia ta, apoi commit + push. Vercel publică automat.
+6. Opțional: `"registrationUrl": "https://forms.gle/…"` (linkul complet, cu `https://`)
+   afișează un buton „Înscrie-te" pe pagina principală și pe pagina evenimentului, până
+   trece evenimentul. / Optional: `"registrationUrl": "https://forms.gle/…"` (the full link,
+   with `https://`) shows a "Register" button on the home page and the event page until the
+   event is over.
+7. Șterge acest README din copia ta, apoi commit + push. Vercel publică automat.
    / Delete this README from your copy, then commit + push. Vercel deploys automatically.
 
 Evenimentele cu data în viitor apar la „Viitoare" și trec singure la „Trecute" după ce
