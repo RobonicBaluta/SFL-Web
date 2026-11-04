@@ -32,7 +32,7 @@ missing translation, missing cover), the build fails naming the file and field.
 
 ## Pagina de admin / The admin page
 
-`/admin` (ex. `https://sfl-romania.vercel.app/admin`) permite adăugarea, editarea și
+`/admin` (`https://studentsforliberty.ro/admin`) permite adăugarea, editarea și
 ștergerea evenimentelor și adăugarea pozelor, de pe telefon sau calculator, fără cod.
 Fiecare salvare devine un commit pe `main`; Vercel publică în ~1–2 minute, iar pagina
 arată când modificarea e live. / `/admin` lets you add, edit and delete events and add
@@ -136,9 +136,47 @@ live site — only the script will ask for a fresh one.
 
 ## Configurare / Configuration — `src/site.config.ts`
 
-Caută `TODO(SFL)` și completează: domeniul de producție (`url`), emailul de contact,
-linkul formularului de înscriere, linkurile social media. / Search for `TODO(SFL)` and fill
-in: production domain (`url`), contact email, signup form URL, social media links.
+Domeniul de producție (`url`), emailul de contact, linkul formularului de înscriere și
+linkurile social media. Din `url` se construiesc linkurile canonice, sitemap-ul și
+previzualizările la distribuire. / Production domain (`url`), contact email, signup form
+URL and social media links. Canonical links, the sitemap and share previews are built
+from `url`.
+
+## Confidențialitate / Privacy policy
+
+Textul paginii `/confidentialitate` (`/en/privacy`) este în
+`content/pages/confidentialitate/ro.mdx` și `en.mdx`. Actualizează-l (și data `updated`)
+când se schimbă ceva: un instrument nou (analytics, formular, newsletter), alt email de
+contact sau o entitate juridică proprie. Nu adăuga Google Analytics, pixeli Facebook sau
+alte cookie-uri de urmărire fără un banner de consimțământ. / The `/confidentialitate`
+(`/en/privacy`) text lives in `content/pages/confidentialitate/ro.mdx` and `en.mdx`.
+Update it (and the `updated` date) whenever something changes: a new tool (analytics,
+form, newsletter), a different contact email, or the organization's own legal entity.
+Don't add Google Analytics, Facebook pixels or other tracking cookies without a consent
+banner.
+
+## Google și motoarele de căutare / Google and search engines
+
+Site-ul generează `sitemap.xml`, `robots.txt`, linkuri canonice și hreflang și date
+structurate schema.org (organizația pe pagina principală, fiecare eveniment cu oraș pe
+pagina lui). / The site generates `sitemap.xml`, `robots.txt`, canonical and hreflang
+links, and schema.org structured data (the organization on the home page, every event
+with a city on its own page).
+
+- **Google Search Console** — [search.google.com/search-console](https://search.google.com/search-console):
+  proprietate de tip „Domeniu" `studentsforliberty.ro`, verificată cu înregistrarea TXT
+  adăugată în Vercel → Domains → studentsforliberty.ro → DNS Records. Apoi Sitemaps →
+  `https://studentsforliberty.ro/sitemap.xml`. / a "Domain" property verified with the TXT
+  record added in Vercel's DNS records, then submit the sitemap.
+- **Bing Webmaster Tools** — [bing.com/webmasters](https://www.bing.com/webmasters): import
+  din Search Console (acoperă și DuckDuckGo, Yahoo, Copilot). / import from Search Console
+  (also covers DuckDuckGo, Yahoo, Copilot).
+- **Verificare evenimente / Checking events** — după publicare, testează pagina în
+  [Rich Results Test](https://search.google.com/test/rich-results). / after publishing,
+  test the page in the Rich Results Test.
+- **Statistici / Statistics** — Vercel → proiectul → Analytics → Enable (fără cookie-uri,
+  nu necesită banner). / Vercel → the project → Analytics → Enable (cookieless, no banner
+  needed).
 
 ## Traduceri / Translations
 
@@ -170,6 +208,9 @@ docker run -p 3000:3000 sfl-romania
 ```
 
 Sau fără Docker / Or without Docker: `npm ci && npm run build && npm run start`
-(Node >= 20), în spatele unui reverse proxy (nginx/Caddy) cu HTTPS. Nu se folosește
-niciun API specific Vercel. / behind a reverse proxy (nginx/Caddy) with HTTPS. No
-Vercel-specific APIs are used.
+(Node >= 20), în spatele unui reverse proxy (nginx/Caddy) cu HTTPS. Singurul element
+specific Vercel este `<Analytics />` din `src/app/[locale]/layout.tsx` (statisticile):
+pe alt server nu trimite nimic, deci înlocuiește-l și actualizează pagina de
+confidențialitate. / behind a reverse proxy (nginx/Caddy) with HTTPS. The only
+Vercel-specific piece is `<Analytics />` in `src/app/[locale]/layout.tsx` (statistics):
+it sends nothing on another server, so replace it and update the privacy policy.

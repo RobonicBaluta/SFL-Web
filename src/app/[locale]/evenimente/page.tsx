@@ -3,7 +3,7 @@ import EventsExplorer from "@/components/EventsExplorer";
 import { assertLocale } from "@/i18n/locale";
 import { toCardData } from "@/lib/cards";
 import { getAllEvents, splitEvents, type SflEvent } from "@/lib/events";
-import { alternatesFor } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -14,11 +14,10 @@ export async function generateMetadata({
 }) {
   const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
-  return {
+  return pageMetadata(locale, "/evenimente", {
     title: t("events.title"),
-    description: t("events.description"),
-    alternates: alternatesFor(locale, "/evenimente")
-  };
+    description: t("events.description")
+  });
 }
 
 export default async function EventsPage({

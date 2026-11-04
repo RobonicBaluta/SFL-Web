@@ -4,10 +4,13 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventInfo from "@/components/EventInfo";
 import Gallery from "@/components/Gallery";
+import JsonLd from "@/components/JsonLd";
 import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getAllSlugs, getEventBySlug, isUpcoming } from "@/lib/events";
-import { alternatesFor } from "@/lib/seo";
+import { PROSE_CLASSES } from "@/lib/prose";
+import { pageMetadata } from "@/lib/seo";
+import { eventJsonLd } from "@/lib/structured-data";
 
 export const dynamicParams = false;
 // Hourly, like the event lists, so the Register button goes away once the event is over.
@@ -26,12 +29,11 @@ export async function generateMetadata({
   const locale = assertLocale(rawLocale);
   if (!getAllSlugs().includes(slug)) notFound();
   const event = getEventBySlug(slug, locale);
-  return {
-    title: event.title,
-    description: event.excerpt,
-    alternates: alternatesFor(locale, { pathname: "/evenimente/[slug]", params: { slug } }),
-    openGraph: { images: [event.coverUrl] }
-  };
+  return pageMetadata(
+    locale,
+    { pathname: "/evenimente/[slug]", params: { slug } },
+    { title: event.title, description: event.excerpt, image: event.coverUrl }
+  );
 }
 
 export default async function EventPage({
@@ -45,9 +47,11 @@ export default async function EventPage({
   setRequestLocale(locale);
   const t = await getTranslations("eventDetail");
   const event = getEventBySlug(slug, locale);
+  const structuredData = eventJsonLd(event, locale);
 
   return (
     <main className="flex-1">
+      {structuredData && <JsonLd data={structuredData} />}
       <div className="relative flex min-h-[min(42.857vw,420px)] w-full items-end overflow-hidden">
         <Image
           src={event.coverUrl}
@@ -87,9 +91,7 @@ export default async function EventPage({
           </a>
         )}
 
-        {/* Tailwind's reset strips list markers and link styling, so the MDX body
-            restores them here — bodies may use paragraphs, bullet/numbered lists and links. */}
-        <div className="mt-8 text-lg leading-relaxed [&_a]:font-semibold [&_a]:underline [&_a]:decoration-sfl-gold [&_a]:decoration-2 [&_a]:underline-offset-2 [&_li]:mb-1 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-5 [&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6">
+        <div className={`mt-8 ${PROSE_CLASSES}`}>
           <MDXRemote source={event.body} />
         </div>
 

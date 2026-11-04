@@ -9,7 +9,7 @@ import {
   shortcodeOf
 } from "./instagram-og.mjs";
 
-const UA = "SFL-Romania-Site/1.0 (+https://sfl-romania.vercel.app)";
+const UA = "SFL-Romania-Site/1.0 (+https://studentsforliberty.ro)";
 const AUTO_FETCH_COUNT = 12;
 const RETENTION = 20;
 const FILE = path.join(process.cwd(), "content", "instagram.json");

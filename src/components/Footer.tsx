@@ -75,8 +75,11 @@ export default async function Footer() {
           )}
         </div>
       </div>
-      <div className="border-t border-sfl-gray/40 py-4 text-center text-sm text-white/70">
-        {t("rights", { year: new Date().getFullYear() })}
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-t border-sfl-gray/40 px-4 py-4 text-center text-sm text-white/70">
+        <span>{t("rights", { year: new Date().getFullYear() })}</span>
+        <Link href="/confidentialitate" className="underline-offset-2 hover:text-sfl-gold hover:underline">
+          {t("privacy")}
+        </Link>
       </div>
     </footer>
   );

@@ -1,24 +1,20 @@
 import type { MetadataRoute } from "next";
-import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllSlugs } from "@/lib/events";
-import { siteConfig } from "@/site.config";
+import { alternatesFor } from "@/lib/seo";
 
-const STATIC_ROUTES = ["/", "/evenimente", "/despre-noi", "/implica-te"] as const;
+const STATIC_ROUTES = ["/", "/evenimente", "/despre-noi", "/implica-te", "/confidentialitate"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const entries: MetadataRoute.Sitemap = [];
-  for (const locale of routing.locales) {
-    for (const href of STATIC_ROUTES) {
-      entries.push({ url: siteConfig.url + getPathname({ locale, href }) });
-    }
-    for (const slug of getAllSlugs()) {
-      entries.push({
-        url:
-          siteConfig.url +
-          getPathname({ locale, href: { pathname: "/evenimente/[slug]", params: { slug } } })
-      });
-    }
-  }
-  return entries;
+  const hrefs = [
+    ...STATIC_ROUTES,
+    ...getAllSlugs().map((slug) => ({ pathname: "/evenimente/[slug]" as const, params: { slug } }))
+  ];
+  // One entry per page and locale, each listing its translations (hreflang).
+  return routing.locales.flatMap((locale) =>
+    hrefs.map((href) => {
+      const { canonical, languages } = alternatesFor(locale, href);
+      return { url: canonical, alternates: { languages } };
+    })
+  );
 }

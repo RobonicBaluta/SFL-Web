@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { assertLocale } from "@/i18n/locale";
 import { getTeam } from "@/lib/team";
-import { alternatesFor } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 
 const GLOBAL_IMAGE = "/images/global/sfl-global.webp";
 
@@ -13,11 +13,10 @@ export async function generateMetadata({
 }) {
   const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
-  return {
+  return pageMetadata(locale, "/despre-noi", {
     title: t("about.title"),
-    description: t("about.description"),
-    alternates: alternatesFor(locale, "/despre-noi")
-  };
+    description: t("about.description")
+  });
 }
 
 export default async function AboutPage({

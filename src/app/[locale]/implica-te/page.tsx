@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { assertLocale } from "@/i18n/locale";
-import { alternatesFor } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/site.config";
 
 export async function generateMetadata({
@@ -10,11 +10,10 @@ export async function generateMetadata({
 }) {
   const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
-  return {
+  return pageMetadata(locale, "/implica-te", {
     title: t("getInvolved.title"),
-    description: t("getInvolved.description"),
-    alternates: alternatesFor(locale, "/implica-te")
-  };
+    description: t("getInvolved.description")
+  });
 }
 
 export default async function GetInvolvedPage({

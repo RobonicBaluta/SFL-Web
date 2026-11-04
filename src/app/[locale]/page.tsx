@@ -2,12 +2,14 @@ import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import EventCard from "@/components/EventCard";
 import InstagramSection from "@/components/InstagramSection";
+import JsonLd from "@/components/JsonLd";
 import NextEvent from "@/components/NextEvent";
 import { assertLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { toCardData } from "@/lib/cards";
 import { getAllEvents, splitEvents } from "@/lib/events";
-import { alternatesFor } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
+import { homeJsonLd } from "@/lib/structured-data";
 
 export const revalidate = 3600;
 
@@ -25,10 +27,7 @@ export async function generateMetadata({
 }) {
   const locale = assertLocale((await params).locale);
   const t = await getTranslations({ locale, namespace: "meta" });
-  return {
-    description: t("defaultDescription"),
-    alternates: alternatesFor(locale, "/")
-  };
+  return pageMetadata(locale, "/", { description: t("defaultDescription") });
 }
 
 export default async function HomePage({
@@ -47,6 +46,7 @@ export default async function HomePage({
 
   return (
     <main className="flex-1">
+      <JsonLd data={homeJsonLd(locale)} />
       <section className="bg-sfl-gold">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
           <div>

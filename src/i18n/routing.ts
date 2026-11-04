@@ -20,6 +20,7 @@ export const routing = defineRouting({
     "/evenimente": { ro: "/evenimente", en: "/events" },
     "/evenimente/[slug]": { ro: "/evenimente/[slug]", en: "/events/[slug]" },
     "/despre-noi": { ro: "/despre-noi", en: "/about" },
-    "/implica-te": { ro: "/implica-te", en: "/get-involved" }
+    "/implica-te": { ro: "/implica-te", en: "/get-involved" },
+    "/confidentialitate": { ro: "/confidentialitate", en: "/privacy" }
   }
 });

@@ -14,7 +14,8 @@
     "followTitle": "Urmărește-ne",
     "contactTitle": "Contact",
     "globalLink": "Students For Liberty Global",
-    "rights": "© {year} Students for Liberty România"
+    "rights": "© {year} Students for Liberty România",
+    "privacy": "Confidențialitate și cookie-uri"
   },
   "home": {
     "heroTitle": "Students for Liberty România",
@@ -105,6 +106,9 @@
     "liberty-road-2026": "Liberty Road Romania 2026",
     "education-program": "Program educațional",
     "international": "Internațional"
+  },
+  "privacy": {
+    "updated": "Ultima actualizare: {date}"
   },
   "meta": {
     "defaultTitle": "Students for Liberty România — Un viitor mai liber",
